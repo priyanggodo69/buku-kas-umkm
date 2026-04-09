@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BukuKas UMKM - Catat Keuangan Lebih Mudah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb, #10b981);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen pb-12">
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 text-white p-2 rounded-lg">
+                        <i class="fas fa-wallet text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-900 tracking-tight">BukuKas <span
+                            class="text-blue-600">UMKM</span></span>
+                </div>
+                <div class="flex items-center gap-4 hidden sm:flex">
+                    <button id="navLogin" onclick="bukaModalLogin()" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+                        Login
+                    </button>
+                    <button id="navDaftar" onclick="bukaModalProfil()" class="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors shadow-sm">
+                        Daftar UMKM
+                    </button>
+                    <button id="navKeluar" onclick="prosesLogout()" class="hidden text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors border border-red-200 shadow-sm">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Keluar
+                    </button>
+                    <button id="navData" onclick="bukaModalProfil()"
+                        class="hidden text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors border border-blue-200 shadow-sm">
+                        <i class="fas fa-store mr-2"></i>Data UMKM
+                    </button>
+                    <div id="profilUmkmBadge" onclick="bukaModalProfil()"
+                        class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold cursor-pointer hover:ring-2 ring-indigo-300 transition-all shadow-sm">
+                        UM
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="text-center py-20 flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <i class="fas fa-wallet text-5xl"></i>
+            </div>
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Mulai Catat Keuangan <span class="text-blue-600">Lebih Mudah</span></h1>
+            <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-8">Pantau arus kas, pemasukan, dan pengeluaran usahamu secara real-time. Silakan Login atau Daftar untuk mengakses Dasbor.</p>
+            <div class="flex gap-4 justify-center">
+                <button onclick="bukaModalLogin()" class="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 font-semibold py-3 px-6 rounded-xl transition shadow-sm">
+                    <i class="fas fa-sign-in-alt mt-1"></i> Login Sekarang
+                </button>
+                <button onclick="bukaModalProfil()" class="bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3 px-6 rounded-xl transition shadow-sm shadow-blue-200">
+                    <i class="fas fa-store mt-1"></i> Daftar UMKM
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="mainDashboard" class="hidden">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h1 id="dashboardTitle" class="text-3xl font-extrabold text-gray-900">Ringkasan Keuangan</h1>
+            <p class="text-gray-500 mt-1">Pantau arus kas usahamu dengan mudah dan cepat.</p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Balance Card -->
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                <div
+                    class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full group-hover:scale-150 transition-transform duration-500">
+                </div>
+                <div class="flex justify-between items-start mb-4 relative z-10">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Saldo</p>
+                        <h2 id="totalSaldo" class="text-3xl font-bold text-gray-900 mt-1">Rp 0</h2>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-wallet text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Income Card -->
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                <div
+                    class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full group-hover:scale-150 transition-transform duration-500">
+                </div>
+                <div class="flex justify-between items-start mb-4 relative z-10">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Pemasukan</p>
+                        <h2 id="totalPemasukan" class="text-3xl font-bold text-emerald-600 mt-1">Rp 0</h2>
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <i class="fas fa-arrow-down text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expense Card -->
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                <div
+                    class="absolute -right-6 -top-6 w-24 h-24 bg-rose-500/10 rounded-full group-hover:scale-150 transition-transform duration-500">
+                </div>
+                <div class="flex justify-between items-start mb-4 relative z-10">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Pengeluaran</p>
+                        <h2 id="totalPengeluaran" class="text-3xl font-bold text-rose-600 mt-1">Rp 0</h2>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+                        <i class="fas fa-arrow-up text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Kas Form -->
+            <div class="lg:col-span-1 border-gray-100">
+                <div class="glass-card rounded-2xl p-6 sticky top-24">
+                    <h3 id="formTitle" class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <i class="fas fa-plus-circle text-blue-600"></i> Tambah Transaksi
+                    </h3>
+
+                    <form id="formTransaksi" class="space-y-5">
+                        <!-- Tipe Transaksi -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Jenis Transaksi</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="tipe" value="masuk" class="peer sr-only" checked>
+                                    <div
+                                        class="text-center px-4 py-3 rounded-xl border border-gray-200 peer-checked:bg-emerald-50 peer-checked:border-emerald-500 peer-checked:text-emerald-700 hover:bg-gray-50 transition-all">
+                                        <i class="fas fa-arrow-down mr-2 opacity-70"></i>Pemasukan
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="tipe" value="keluar" class="peer sr-only">
+                                    <div
+                                        class="text-center px-4 py-3 rounded-xl border border-gray-200 peer-checked:bg-rose-50 peer-checked:border-rose-500 peer-checked:text-rose-700 hover:bg-gray-50 transition-all">
+                                        <i class="fas fa-arrow-up mr-2 opacity-70"></i>Pengeluaran
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Keterangan -->
+                        <div>
+                            <label for="keterangan" class="block text-sm font-semibold text-gray-700 mb-2">Keterangan /
+                                Nama Produk</label>
+                            <input type="text" id="keterangan" placeholder="Contoh: Penjualan Baju Batik" required
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow outline-none text-gray-800">
+                        </div>
+
+                        <!-- Nominal -->
+                        <div>
+                            <label for="jumlah" class="block text-sm font-semibold text-gray-700 mb-2">Nominal
+                                (Rp)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 font-medium">Rp</span>
+                                </div>
+                                <input type="number" id="jumlah" placeholder="0" min="1" required
+                                    class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow outline-none text-gray-800">
+                            </div>
+                        </div>
+
+                        <!-- Kategori -->
+                        <div>
+                            <label for="kategori"
+                                class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label>
+                            <select id="kategori"
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow outline-none text-gray-800 bg-white">
+                                <option value="Penjualan">Penjualan</option>
+                                <option value="Modal">Modal Tambahan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" id="btnSubmitTransaksi"
+                            class="w-full bg-blue-600 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2 mt-4">
+                            <i class="fas fa-save"></i> Simpan Transaksi
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- List Transaksi -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                        <h3 class="text-lg font-bold text-gray-900">Riwayat Transaksi Terbaru</h3>
+                        <div class="flex items-center gap-3">
+                            <button onclick="downloadExcel()" class="text-sm bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-3 py-1.5 rounded-lg font-semibold transition-colors flex items-center gap-2 shadow-sm" title="Download format Excel (CSV)">
+                                <i class="fas fa-file-excel"></i> Export Excel
+                            </button>
+                            <div class="text-sm text-gray-500 flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-lg font-medium hidden sm:flex">
+                                <i class="far fa-calendar-alt"></i> <span id="currentDate"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="text-gray-400 text-sm uppercase tracking-wider border-b border-gray-100 bg-gray-50/50">
+                                    <th class="pb-3 pt-3 px-4 font-semibold rounded-tl-xl whitespace-nowrap">Keterangan
+                                    </th>
+                                    <th class="pb-3 pt-3 px-4 font-semibold whitespace-nowrap">Kategori</th>
+                                    <th class="pb-3 pt-3 px-4 font-semibold whitespace-nowrap">Tanggal</th>
+                                    <th class="pb-3 pt-3 px-4 font-semibold text-right whitespace-nowrap">Nominal</th>
+                                    <th class="pb-3 pt-3 px-4 font-semibold text-center rounded-tr-xl whitespace-nowrap">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelTransaksi" class="text-gray-700 divide-y divide-gray-50">
+                                <!-- Data diisi via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="emptyState" class="hidden py-12 text-center">
+                        <div
+                            class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                            <i class="fas fa-receipt text-3xl"></i>
+                        </div>
+                        <h4 class="text-gray-900 font-semibold mb-1">Belum Ada Transaksi</h4>
+                        <p class="text-gray-500 text-sm">Mulai catat pemasukan dan pengeluaran usahamu.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div> <!-- End of mainDashboard -->
+    </main>
+
+    <!-- Modal Input UMKM -->
+    <div id="modalProfilUMKM" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="tutupModalProfil()"></div>
+        <div class="bg-white rounded-2xl max-w-lg w-full relative z-10 shadow-2xl overflow-hidden">
+            <div class="bg-blue-600 p-5 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold">Data UMKM</h2>
+                    <p class="text-blue-100 text-sm">Lengkapi profil usaha Anda di bawah ini</p>
+                </div>
+                <button onclick="tutupModalProfil()"
+                    class="text-white hover:text-blue-200 transition focus:outline-none"><i
+                        class="fas fa-times text-xl"></i></button>
+            </div>
+
+            <form id="formProfilUMKM" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                    class="fas fa-user-circle"></i></span>
+                            <input type="text" id="prof_username" required placeholder="Buat username"
+                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                    class="fas fa-lock"></i></span>
+                            <input type="password" id="prof_password" required placeholder="Buat password"
+                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama UMKM</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                class="fas fa-store"></i></span>
+                        <input type="text" id="prof_nama_umkm" required placeholder="Contoh: Kripik Buah Segar"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Pemilik UMKM</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                    class="fas fa-user"></i></span>
+                            <input type="text" id="prof_pemilik" required placeholder="Nama Lengkap"
+                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">No. HP / WhatsApp</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                    class="fas fa-phone-alt"></i></span>
+                            <input type="tel" id="prof_nohp" required placeholder="Contoh: 0812..."
+                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat UMKM</label>
+                    <textarea id="prof_alamat" rows="2" required placeholder="Alamat lengkap tempat usaha"
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Bidang Usaha</label>
+                        <select id="prof_bidang"
+                            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition bg-white">
+                            <option value="Kuliner">Kuliner</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Kerajinan">Kerajinan</option>
+                            <option value="Jasa">Jasa</option>
+                            <option value="Agribisnis">Agribisnis</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Berdiri</label>
+                        <input type="date" id="prof_tanggal" required
+                            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor Izin Usaha (NIB/SIUP)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                class="fas fa-file-signature"></i></span>
+                        <input type="text" id="prof_izin" required placeholder="Contoh: 1234567890123"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    </div>
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition mt-4 flex justify-center items-center gap-2 shadow-lg shadow-blue-200">
+                    <i class="fas fa-save"></i> Simpan Data UMKM
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Login -->
+    <div id="modalLogin" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="tutupModalLogin()"></div>
+        <div class="bg-white rounded-2xl max-w-sm w-full relative z-10 shadow-2xl overflow-hidden">
+            <div class="bg-blue-600 p-5 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold">Login UMKM</h2>
+                    <p class="text-blue-100 text-sm">Masuk ke akun Anda</p>
+                </div>
+                <button onclick="tutupModalLogin()"
+                    class="text-white hover:text-blue-200 transition focus:outline-none"><i
+                        class="fas fa-times text-xl"></i></button>
+            </div>
+
+            <form id="formLogin" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                class="fas fa-user-circle"></i></span>
+                        <input type="text" id="login_username" required placeholder="Masukkan username"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i
+                                class="fas fa-lock"></i></span>
+                        <input type="password" id="login_password" required placeholder="Masukkan password"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                    </div>
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition mt-4 flex justify-center items-center gap-2 shadow-lg shadow-blue-200">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Migration of old single-user data to multi-user data
+        const oldProfil = JSON.parse(localStorage.getItem('profil_umkm'));
+        const oldTransaksi = JSON.parse(localStorage.getItem('keuangan_umkm'));
+        
+        if (oldProfil && oldProfil.username) {
+            const users = JSON.parse(localStorage.getItem('db_users')) || {};
+            if(!users[oldProfil.username]) {
+                users[oldProfil.username] = oldProfil;
+                localStorage.setItem('db_users', JSON.stringify(users));
+            }
+            localStorage.removeItem('profil_umkm'); // clean up
+        }
+
+        if (oldTransaksi && oldTransaksi.length > 0) {
+            let dbTransaksi = JSON.parse(localStorage.getItem('db_transaksi')) || [];
+            oldTransaksi.forEach(t => {
+                if(!t.username && oldProfil && oldProfil.username) {
+                    t.username = oldProfil.username; // attach old transactions to the old profile
+                }
+                dbTransaksi.push(t);
+            });
+            localStorage.setItem('db_transaksi', JSON.stringify(dbTransaksi));
+            localStorage.removeItem('keuangan_umkm'); // clean up
+        }
+
+        // Data Storage
+        let daftarTransaksi = JSON.parse(localStorage.getItem('db_transaksi')) || [];
+
+        // Login Logic
+        const bukaModalLogin = () => {
+            document.getElementById('login_username').value = '';
+            document.getElementById('login_password').value = '';
+            document.body.style.overflow = 'hidden';
+            document.getElementById('modalLogin').classList.remove('hidden');
+        };
+
+        const tutupModalLogin = () => {
+            document.body.style.overflow = 'auto';
+            document.getElementById('modalLogin').classList.add('hidden');
+        };
+
+        const updateAuthUI = () => {
+            const loggedInUser = localStorage.getItem('logged_in_user');
+            const isLoggedIn = !!loggedInUser;
+
+            const navLogin = document.getElementById('navLogin');
+            const navDaftar = document.getElementById('navDaftar');
+            const navKeluar = document.getElementById('navKeluar');
+            const navData = document.getElementById('navData');
+            
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const mainDashboard = document.getElementById('mainDashboard');
+
+            if (isLoggedIn) {
+                if (navLogin) navLogin.classList.add('hidden');
+                if (navDaftar) navDaftar.classList.add('hidden');
+                if (navKeluar) navKeluar.classList.remove('hidden');
+                if (navData) navData.classList.remove('hidden');
+                if (welcomeScreen) welcomeScreen.classList.add('hidden');
+                if (mainDashboard) mainDashboard.classList.remove('hidden');
+                
+                // Update badge & title
+                const users = JSON.parse(localStorage.getItem('db_users')) || {};
+                if(users[loggedInUser] && users[loggedInUser].nama_umkm) {
+                    const textNamaUmkm = users[loggedInUser].nama_umkm;
+                    document.getElementById('profilUmkmBadge').innerText = textNamaUmkm.substring(0, 2).toUpperCase();
+                    
+                    const titleEl = document.getElementById('dashboardTitle');
+                    if(titleEl) titleEl.innerText = `Ringkasan Keuangan - ${textNamaUmkm}`;
+                }
+                
+                // Refresh table to show user data
+                renderTabel();
+            } else {
+                if (navLogin) navLogin.classList.remove('hidden');
+                if (navDaftar) navDaftar.classList.remove('hidden');
+                if (navKeluar) navKeluar.classList.add('hidden');
+                if (navData) navData.classList.add('hidden');
+                if (welcomeScreen) welcomeScreen.classList.remove('hidden');
+                if (mainDashboard) mainDashboard.classList.add('hidden');
+                document.getElementById('profilUmkmBadge').innerText = 'UM';
+                
+                const titleEl = document.getElementById('dashboardTitle');
+                if(titleEl) titleEl.innerText = 'Ringkasan Keuangan';
+            }
+        };
+
+        const prosesLogout = () => {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                localStorage.removeItem('logged_in_user');
+                updateAuthUI();
+
+                const notif = document.createElement('div');
+                notif.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl z-50 transform transition-all translate-y-0 opacity-100 flex items-center gap-3';
+                notif.innerHTML = '<i class="fas fa-info-circle text-blue-400"></i> Anda telah keluar.';
+                document.body.appendChild(notif);
+
+                setTimeout(() => {
+                    notif.classList.replace('translate-y-0', 'translate-y-4');
+                    notif.classList.replace('opacity-100', 'opacity-0');
+                    setTimeout(() => notif.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        document.getElementById('formLogin').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const inputUser = document.getElementById('login_username').value;
+            const inputPass = document.getElementById('login_password').value;
+            const users = JSON.parse(localStorage.getItem('db_users')) || {};
+
+            if (users[inputUser] && users[inputUser].password === inputPass) {
+                localStorage.setItem('logged_in_user', inputUser);
+                tutupModalLogin();
+                updateAuthUI();
+
+                const notif = document.createElement('div');
+                notif.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl z-50 transform transition-all translate-y-0 opacity-100 flex items-center gap-3';
+                notif.innerHTML = '<i class="fas fa-check-circle text-emerald-400"></i> Login berhasil!';
+                document.body.appendChild(notif);
+
+                setTimeout(() => {
+                    notif.classList.replace('translate-y-0', 'translate-y-4');
+                    notif.classList.replace('opacity-100', 'opacity-0');
+                    setTimeout(() => notif.remove(), 300);
+                }, 3000);
+            } else {
+                alert('Username atau Password salah, atau Anda belum mendaftar di form pendaftaran UMKM!');
+            }
+        });
+
+        // Profil UMKM Logic
+        const bukaModalProfil = () => {
+            const loggedInUser = localStorage.getItem('logged_in_user');
+            const users = JSON.parse(localStorage.getItem('db_users')) || {};
+            let dataProfil = {};
+            
+            if (loggedInUser && users[loggedInUser]) {
+                dataProfil = users[loggedInUser];
+                document.getElementById('prof_username').disabled = true;
+                document.getElementById('prof_username').classList.add('bg-gray-100');
+            } else {
+                document.getElementById('prof_username').disabled = false;
+                document.getElementById('prof_username').classList.remove('bg-gray-100');
+            }
+
+            document.getElementById('prof_username').value = dataProfil.username || '';
+            document.getElementById('prof_password').value = dataProfil.password || '';
+            document.getElementById('prof_nama_umkm').value = dataProfil.nama_umkm || '';
+            document.getElementById('prof_pemilik').value = dataProfil.pemilik || '';
+            document.getElementById('prof_nohp').value = dataProfil.nohp || '';
+            document.getElementById('prof_alamat').value = dataProfil.alamat || '';
+            document.getElementById('prof_bidang').value = dataProfil.bidang || 'Kuliner';
+            if(dataProfil.tanggal) document.getElementById('prof_tanggal').value = dataProfil.tanggal;
+            else document.getElementById('prof_tanggal').value = '';
+            document.getElementById('prof_izin').value = dataProfil.izin || '';
+
+            document.body.style.overflow = 'hidden';
+            document.getElementById('modalProfilUMKM').classList.remove('hidden');
+        };
+
+        const tutupModalProfil = () => {
+            document.body.style.overflow = 'auto';
+            document.getElementById('modalProfilUMKM').classList.add('hidden');
+        };
+
+        document.getElementById('formProfilUMKM').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('prof_username').value;
+            const users = JSON.parse(localStorage.getItem('db_users')) || {};
+            const loggedInUser = localStorage.getItem('logged_in_user');
+
+            if (!loggedInUser && users[username]) {
+                alert('Username sudah terpakai. Silakan pilih username lain!');
+                return;
+            }
+
+            const dataProfil = {
+                username: username,
+                password: document.getElementById('prof_password').value,
+                nama_umkm: document.getElementById('prof_nama_umkm').value,
+                pemilik: document.getElementById('prof_pemilik').value,
+                nohp: document.getElementById('prof_nohp').value,
+                alamat: document.getElementById('prof_alamat').value,
+                bidang: document.getElementById('prof_bidang').value,
+                tanggal: document.getElementById('prof_tanggal').value,
+                izin: document.getElementById('prof_izin').value
+            };
+            
+            users[username] = dataProfil;
+            localStorage.setItem('db_users', JSON.stringify(users));
+
+            const notif = document.createElement('div');
+            notif.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl z-50 transform transition-all translate-y-0 opacity-100 flex items-center gap-3';
+            notif.innerHTML = '<i class="fas fa-check-circle text-blue-400"></i> Profil UMKM berhasil disimpan!';
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                notif.classList.replace('translate-y-0', 'translate-y-4');
+                notif.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+
+            // If updating currently logged in user, refresh UI
+            if (loggedInUser === username) {
+                updateAuthUI();
+            }
+
+            tutupModalProfil();
+        });
+
+        // Kategori Options state
+        const inputRadios = document.querySelectorAll('input[name="tipe"]');
+        const selectKategori = document.getElementById('kategori');
+
+        inputRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const tipe = e.target.value;
+                selectKategori.innerHTML = '';
+
+                if (tipe === 'masuk') {
+                    selectKategori.innerHTML = `
+                        <option value="Penjualan">Penjualan</option>
+                        <option value="Modal">Modal Tambahan</option>
+                        <option value="Lainnya">Lainnya</option>
+                    `;
+                } else {
+                    selectKategori.innerHTML = `
+                        <option value="Bahan Baku">Bahan Baku / Stok</option>
+                        <option value="Operasional">Operasional (Listrik, Air)</option>
+                        <option value="Gaji">Gaji Pegawai</option>
+                        <option value="Pajak">Pajak / Retribusi</option>
+                        <option value="Lainnya">Lainnya</option>
+                    `;
+                }
+            });
+        });
+
+        const downloadExcel = () => {
+            const loggedInUser = localStorage.getItem('logged_in_user');
+            if(!loggedInUser) return;
+            
+            const users = JSON.parse(localStorage.getItem('db_users')) || {};
+            const namaUmkm = users[loggedInUser] ? users[loggedInUser].nama_umkm : 'UMKM';
+
+            let daftarTransaksi = JSON.parse(localStorage.getItem('db_transaksi')) || [];
+            const userTransaksi = daftarTransaksi.filter(t => t.username === loggedInUser);
+
+            if(userTransaksi.length === 0) {
+                alert('Tidak ada data transaksi untuk di-export.');
+                return;
+            }
+
+            // Membangun file CSV, delimiter semicolon ideal untuk Excel locale Indonesia
+            let csvContent = "Tanggal;Keterangan;Kategori;Tipe;Nominal (Rp)\n";
+
+            // Urutkan data berdasarkan waktu secara teratur (ascending) untuk Excel
+            const sortedExport = [...userTransaksi].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+
+            sortedExport.forEach(t => {
+                const dateRaw = new Date(t.tanggal);
+                const dateFormatted = `${dateRaw.getDate()}/${dateRaw.getMonth()+1}/${dateRaw.getFullYear()} ${String(dateRaw.getHours()).padStart(2, '0')}:${String(dateRaw.getMinutes()).padStart(2, '0')}`;
+                
+                // Menghindari karakter kutip ganda dan konflik delimiter
+                const keterangan = `"${t.keterangan.replace(/"/g, '""')}"`;
+                const kategori = `"${t.kategori}"`;
+                const tipe = t.tipe === 'masuk' ? 'Pemasukan' : 'Pengeluaran';
+                const nominal = t.jumlah;
+
+                csvContent += `${dateFormatted};${keterangan};${kategori};${tipe};${nominal}\n`;
+            });
+
+            // Blob dengan BOM marker supaya Windows Excel otomatis membacanya sebagai UTF-8
+            const blob = new Blob(["\ufeff", csvContent], { type: 'text/csv;charset=utf-8;' }); 
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            const exportDate = new Date().toISOString().split('T')[0];
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Laporan_Keuangan_${namaUmkm.replace(/[^a-z0-9]/gi, '_')}_${exportDate}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        const updateDate = () => {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('id-ID', options);
+        };
+        updateDate();
+
+        const formatRupiah = (angka) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        };
+
+        const formatWaktu = (dateString) => {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' - ' + date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+        }
+
+        let editingId = null;
+
+        const renderTabel = () => {
+            const loggedInUser = localStorage.getItem('logged_in_user');
+            if (!loggedInUser) return;
+
+            const tbody = document.getElementById('tabelTransaksi');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+
+            let totalPemasukan = 0;
+            let totalPengeluaran = 0;
+            
+            // Filter only current user's transactions
+            const userTransaksi = daftarTransaksi.filter(t => t.username === loggedInUser);
+
+            if (userTransaksi.length === 0) {
+                emptyState.classList.remove('hidden');
+                document.querySelector('table').classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                document.querySelector('table').classList.remove('hidden');
+
+                const sortedTransaksi = [...userTransaksi].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+                sortedTransaksi.forEach(t => {
+                    const isMasuk = t.tipe === 'masuk';
+                    if (isMasuk) totalPemasukan += Number(t.jumlah);
+                    else totalPengeluaran += Number(t.jumlah);
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50/80 transition-colors group";
+                    tr.innerHTML = `
+                        <td class="py-4 px-4 align-middle">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isMasuk ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
+                                    <i class="fas ${isMasuk ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">${t.keterangan}</p>
+                                    <p class="text-xs text-gray-500 md:hidden mt-0.5">${t.kategori}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-4 align-middle hidden md:table-cell">
+                            <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium whitespace-nowrap">${t.kategori}</span>
+                        </td>
+                        <td class="py-4 px-4 align-middle text-sm text-gray-500 whitespace-nowrap">
+                            ${formatWaktu(t.tanggal)}
+                        </td>
+                        <td class="py-4 px-4 align-middle text-right font-bold ${isMasuk ? 'text-emerald-600' : 'text-rose-600'} whitespace-nowrap">
+                            ${isMasuk ? '+' : '-'} ${formatRupiah(t.jumlah)}
+                        </td>
+                        <td class="py-4 px-4 align-middle text-center whitespace-nowrap">
+                            <button onclick="editTransaksi(${t.id})" class="text-blue-500 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition" title="Edit Transaksi">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="hapusTransaksi(${t.id})" class="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition" title="Hapus Transaksi">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            const saldo = totalPemasukan - totalPengeluaran;
+
+            document.getElementById('totalSaldo').innerText = formatRupiah(saldo);
+            document.getElementById('totalPemasukan').innerText = formatRupiah(totalPemasukan);
+            document.getElementById('totalPengeluaran').innerText = formatRupiah(totalPengeluaran);
+
+            if (saldo < 0) {
+                document.getElementById('totalSaldo').classList.replace('text-gray-900', 'text-rose-600');
+            } else {
+                document.getElementById('totalSaldo').classList.replace('text-rose-600', 'text-gray-900');
+            }
+        };
+
+        const editTransaksi = (id) => {
+            const transaksi = daftarTransaksi.find(t => t.id === id);
+            if (!transaksi) return;
+
+            editingId = id;
+            
+            // Fill form
+            document.querySelector(`input[name="tipe"][value="${transaksi.tipe}"]`).checked = true;
+            document.querySelector(`input[name="tipe"][value="${transaksi.tipe}"]`).dispatchEvent(new Event('change'));
+
+            document.getElementById('keterangan').value = transaksi.keterangan;
+            document.getElementById('jumlah').value = transaksi.jumlah;
+            
+            setTimeout(() => {
+                document.getElementById('kategori').value = transaksi.kategori;
+            }, 50);
+
+            // Update UI
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit text-amber-500"></i> Edit Transaksi';
+            const btnSubmit = document.getElementById('btnSubmitTransaksi');
+            btnSubmit.innerHTML = '<i class="fas fa-save"></i> Update Transaksi';
+            btnSubmit.className = 'w-full bg-amber-500 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-amber-600 focus:ring-4 focus:ring-amber-200 transition-all shadow-lg shadow-amber-200 flex items-center justify-center gap-2 mt-4';
+
+            if(!document.getElementById('btnBatalEdit')) {
+                const btnBatal = document.createElement('button');
+                btnBatal.type = 'button';
+                btnBatal.id = 'btnBatalEdit';
+                btnBatal.className = 'w-full bg-gray-100 text-gray-700 font-bold py-3.5 px-4 rounded-xl hover:bg-gray-200 transition mt-2';
+                btnBatal.innerText = 'Batal Edit';
+                btnBatal.onclick = batalEdit;
+                document.getElementById('formTransaksi').appendChild(btnBatal);
+            }
+
+            document.getElementById('formTransaksi').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        const batalEdit = () => {
+            editingId = null;
+            document.getElementById('formTransaksi').reset();
+            
+            document.querySelector('input[name="tipe"][value="masuk"]').checked = true;
+            document.querySelector('input[name="tipe"][value="masuk"]').dispatchEvent(new Event('change'));
+
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-plus-circle text-blue-600"></i> Tambah Transaksi';
+            const btnSubmit = document.getElementById('btnSubmitTransaksi');
+            btnSubmit.innerHTML = '<i class="fas fa-save"></i> Simpan Transaksi';
+            btnSubmit.className = 'w-full bg-blue-600 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2 mt-4';
+            
+            const btnBatal = document.getElementById('btnBatalEdit');
+            if (btnBatal) btnBatal.remove();
+        };
+
+        const hapusTransaksi = (id) => {
+            if(confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
+                daftarTransaksi = JSON.parse(localStorage.getItem('db_transaksi')) || [];
+                daftarTransaksi = daftarTransaksi.filter(t => t.id !== id);
+                localStorage.setItem('db_transaksi', JSON.stringify(daftarTransaksi));
+                
+                const notif = document.createElement('div');
+                notif.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl z-50 transform transition-all translate-y-0 opacity-100 flex items-center gap-3';
+                notif.innerHTML = '<i class="fas fa-trash-alt text-red-400"></i> Transaksi dihapus!';
+                document.body.appendChild(notif);
+
+                setTimeout(() => {
+                    notif.classList.replace('translate-y-0', 'translate-y-4');
+                    notif.classList.replace('opacity-100', 'opacity-0');
+                    setTimeout(() => notif.remove(), 300);
+                }, 3000);
+
+                renderTabel();
+            }
+        };
+
+        document.getElementById('formTransaksi').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const loggedInUser = localStorage.getItem('logged_in_user');
+            if(!loggedInUser) {
+                alert("Sesi telah habis, silakan login kembali.");
+                return;
+            }
+
+            const tipe = document.querySelector('input[name="tipe"]:checked').value;
+            const keterangan = document.getElementById('keterangan').value;
+            const jumlah = document.getElementById('jumlah').value;
+            const kategori = document.getElementById('kategori').value;
+
+            daftarTransaksi = JSON.parse(localStorage.getItem('db_transaksi')) || [];
+
+            if (editingId) {
+                const index = daftarTransaksi.findIndex(t => t.id === editingId);
+                if (index !== -1) {
+                    daftarTransaksi[index] = {
+                        ...daftarTransaksi[index],
+                        tipe, keterangan, jumlah, kategori
+                    };
+                }
+                editingId = null;
+            } else {
+                const transaksiBaru = {
+                    id: Date.now(),
+                    username: loggedInUser,
+                    tipe,
+                    keterangan,
+                    jumlah,
+                    kategori,
+                    tanggal: new Date().toISOString()
+                };
+                daftarTransaksi.push(transaksiBaru);
+            }
+
+            localStorage.setItem('db_transaksi', JSON.stringify(daftarTransaksi));
+
+            batalEdit();
+
+            const notif = document.createElement('div');
+            notif.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl z-50 transform transition-all translate-y-0 opacity-100 flex items-center gap-3';
+            notif.innerHTML = '<i class="fas fa-check-circle text-emerald-400"></i> Transaksi berhasil disimpan!';
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                notif.classList.replace('translate-y-0', 'translate-y-4');
+                notif.classList.replace('opacity-100', 'opacity-0');
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+
+            renderTabel();
+        });
+
+
+        // Init
+        updateAuthUI();
+    </script>
+</body>
+
+</html>

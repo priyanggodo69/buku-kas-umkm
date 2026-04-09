@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah UMKM - Digitalisasi Ekonomi Lokal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-orange-600">Rumah<span class="text-gray-900">UMKM</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#beranda" class="hover:text-orange-600 transition">Beranda</a>
+                    <a href="#katalog" class="hover:text-orange-600 transition">Katalog</a>
+                    <a href="#tentang" class="hover:text-orange-600 transition">Tentang Kami</a>
+                    <a href="javascript:void(0)" onclick="bukaModalDaftar()"
+                        class="bg-orange-600 text-white px-5 py-2 rounded-full font-medium hover:bg-orange-700 transition">Pendaftaran
+                        UMKM
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="beranda" class="hero-gradient py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                    Bawa Produk Lokal ke <span class="text-orange-600">Level Global</span>
+                </h1>
+                <p class="text-lg text-gray-600 mb-8">
+                    Rumah UMKM adalah wadah kolaborasi untuk memperkenalkan produk unggulan daerah ke pasar yang lebih
+                    luas dengan sentuhan teknologi modern.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#katalog"
+                        class="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition">Jelajahi
+                        Produk</a>
+                    <a href="#"
+                        class="border-2 border-orange-600 text-orange-600 px-8 py-3 rounded-lg hover:bg-orange-50 transition font-medium">Pelajari
+                        Alur</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div
+                    class="w-80 h-80 md:w-96 md:h-96 bg-orange-200 rounded-2xl rotate-3 flex items-center justify-center border-4 border-white shadow-xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000"
+                        alt="Produk Lokal" class="object-cover h-full w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-12 border-b">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <p class="text-3xl font-bold text-orange-600">500+</p>
+                <p class="text-gray-500">UMKM Terdaftar</p>
+            </div>
+            <div>
+                <p class="text-3xl font-bold text-orange-600">1.2k</p>
+                <p class="text-gray-500">Produk Kurasi</p>
+            </div>
+            <div>
+                <p class="text-3xl font-bold text-orange-600">15+</p>
+                <p class="text-gray-500">Kabupaten/Kota</p>
+            </div>
+            <div>
+                <p class="text-3xl font-bold text-orange-600">24/7</p>
+                <p class="text-gray-500">Dukungan Bisnis</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="katalog" class="py-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">Produk Unggulan Hari Ini</h2>
+                <div class="h-1 w-20 bg-orange-600 mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                    <img src="https://images.unsplash.com/photo-1590593162201-f67611a18b87?auto=format&fit=crop&q=80&w=500"
+                        class="h-48 w-full object-cover" alt="Kerajinan">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-orange-600 uppercase tracking-wider">Kerajinan</span>
+                        <h3 class="text-xl font-bold my-2">Tas Rotan Etnik</h3>
+                        <p class="text-gray-500 text-sm mb-4">Dibuat manual oleh pengrajin lokal dengan bahan organik
+                            berkualitas.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-lg">Rp 250.000</span>
+                            <button
+                                onclick="bukaModalDetailProduk('Tas Rotan Etnik', 'Kerajinan', 'Rp 250.000', 'Dibuat manual oleh pengrajin lokal dengan bahan organik berkualitas.', 'https://images.unsplash.com/photo-1590593162201-f67611a18b87?auto=format&fit=crop&q=80&w=500')"
+                                class="text-orange-600 font-semibold hover:underline">Detail →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                    <img src="https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&q=80&w=500"
+                        class="h-48 w-full object-cover" alt="Makanan">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-orange-600 uppercase tracking-wider">Kuliner</span>
+                        <h3 class="text-xl font-bold my-2">Kopi Arabika Toraja</h3>
+                        <p class="text-gray-500 text-sm mb-4">Biji kopi pilihan dengan aroma khas yang mendunia.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-lg">Rp 85.000</span>
+                            <button
+                                onclick="bukaModalDetailProduk('Kopi Arabika Toraja', 'Kuliner', 'Rp 85.000', 'Biji kopi pilihan dengan aroma khas yang mendunia.', 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&q=80&w=500')"
+                                class="text-orange-600 font-semibold hover:underline">Detail →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                    <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=500"
+                        class="h-48 w-full object-cover" alt="Fashion">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-orange-600 uppercase tracking-wider">Fashion</span>
+                        <h3 class="text-xl font-bold my-2">Batik Tulis Klasik</h3>
+                        <p class="text-gray-500 text-sm mb-4">Motif eksklusif yang menceritakan filosofi kearifan lokal.
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-lg">Rp 450.000</span>
+                            <button
+                                onclick="bukaModalDetailProduk('Batik Tulis Klasik', 'Fashion', 'Rp 450.000', 'Motif eksklusif yang menceritakan filosofi kearifan lokal.', 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=500')"
+                                class="text-orange-600 font-semibold hover:underline">Detail →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+                <h4 class="text-xl font-bold mb-6">Rumah UMKM</h4>
+                <p class="text-gray-400">Mendukung pertumbuhan ekonomi mandiri melalui pemberdayaan pengusaha kecil dan
+                    menengah di seluruh Indonesia.</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Tautan Cepat</h4>
+                <ul class="space-y-4 text-gray-400">
+                    <li><a href="#" class="hover:text-white transition">Cara Pendaftaran</a></li>
+                    <li><a href="#" class="hover:text-white transition">Kebijakan Privasi</a></li>
+                    <li><a href="#" class="hover:text-white transition">Hubungi Kami</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Ikuti Kami</h4>
+                <div class="flex space-x-4 text-2xl">
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+            &copy; 2026 Rumah UMKM Digital. Dibuat dengan semangat lokal.
+        </div>
+    </footer>
+    <div id="modalDaftar" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="tutupModalDaftar()"></div>
+
+        <div
+            class="bg-white rounded-3xl max-w-lg w-full relative z-10 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-300 flex flex-col max-h-[90vh]">
+
+            <div class="bg-orange-600 p-6 text-white text-center shrink-0">
+                <h2 class="text-2xl font-bold">Gabung Rumah UMKM</h2>
+                <p class="text-orange-100 text-sm">Lengkapi data untuk mulai mendaftarkan usaha Anda.</p>
+            </div>
+
+            <div class="overflow-y-auto overflow-x-hidden p-8">
+                <form id="formPendaftaran" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fas fa-user-circle"></i>
+                            </span>
+                            <input type="text" name="username" required placeholder="Username"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" name="password" required placeholder="Password"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Pemilik</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" name="nama_pemilik" required placeholder="Nama Lengkap"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nama UMKM / Toko</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fas fa-store"></i>
+                            </span>
+                            <input type="text" name="nama_toko" required placeholder="Contoh: Batik Barokah"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor WhatsApp</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fab fa-whatsapp"></i>
+                            </span>
+                            <input type="tel" name="whatsapp" required placeholder="628123456789"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori Produk Utama (Bisa pilih
+                            lebih dari satu)</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label
+                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-orange-50 transition">
+                                <input type="checkbox" name="kategori[]" value="kuliner"
+                                    class="w-4 h-4 accent-orange-600 cursor-pointer">
+                                <span class="text-gray-700 text-sm">Kuliner (Makanan & Minuman)</span>
+                            </label>
+                            <label
+                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-orange-50 transition">
+                                <input type="checkbox" name="kategori[]" value="fashion"
+                                    class="w-4 h-4 accent-orange-600 cursor-pointer">
+                                <span class="text-gray-700 text-sm">Fashion & Pakaian</span>
+                            </label>
+                            <label
+                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-orange-50 transition">
+                                <input type="checkbox" name="kategori[]" value="kerajinan"
+                                    class="w-4 h-4 accent-orange-600 cursor-pointer">
+                                <span class="text-gray-700 text-sm">Kerajinan Tangan</span>
+                            </label>
+                            <label
+                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-orange-50 transition">
+                                <input type="checkbox" name="kategori[]" value="jasa"
+                                    class="w-4 h-4 accent-orange-600 cursor-pointer">
+                                <span class="text-gray-700 text-sm">Jasa Kreatif</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Alamat Lengkap</label>
+                        <div class="relative">
+                            <span class="absolute top-0 left-0 pl-3 pt-3.5 flex items-start text-gray-400">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </span>
+                            <textarea name="alamat" required placeholder="Detail Alamat Lengkap..." rows="3"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kabupaten/Kota</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fas fa-city"></i>
+                            </span>
+                            <select name="kabupaten_kota" required
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-white appearance-none cursor-pointer">
+                                <option value="" disabled selected>Pilih Kabupaten/Kota</option>
+                                <option value="Kota Palu">Kota Palu</option>
+                                <option value="Kab. Banggai">Kab. Banggai</option>
+                                <option value="Kab. Banggai Kepulauan">Kab. Banggai Kepulauan</option>
+                                <option value="Kab. Banggai Laut">Kab. Banggai Laut</option>
+                                <option value="Kab. Buol">Kab. Buol</option>
+                                <option value="Kab. Donggala">Kab. Donggala</option>
+                                <option value="Kab. Morowali">Kab. Morowali</option>
+                                <option value="Kab. Morowali Utara">Kab. Morowali Utara</option>
+                                <option value="Kab. Parigi Moutong">Kab. Parigi Moutong</option>
+                                <option value="Kab. Poso">Kab. Poso</option>
+                                <option value="Kab. Sigi">Kab. Sigi</option>
+                                <option value="Kab. Tojo Una-Una">Kab. Tojo Una-Una</option>
+                                <option value="Kab. Tolitoli">Kab. Tolitoli</option>
+                            </select>
+                            <span
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                                <i class="fas fa-chevron-down text-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnKirimDaftar"
+                        class="w-full bg-orange-600 text-white font-bold py-4 rounded-xl hover:bg-orange-700 transition shadow-lg shadow-orange-200 flex justify-center items-center gap-2">
+                        Pendaftaran UMKM <i class="fas fa-arrow-right"></i>
+                    </button>
+
+                    <button type="button" onclick="tutupModalDaftar()"
+                        class="w-full text-gray-400 text-sm hover:text-gray-600 py-2">
+                        Nanti Saja
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Produk -->
+    <div id="modalDetailProduk" class="fixed inset-0 z-[140] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="tutupModalDetailProduk()"></div>
+
+        <div
+            class="bg-white rounded-2xl max-w-2xl w-full relative z-10 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <button onclick="tutupModalDetailProduk()"
+                class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm text-gray-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-sm z-20">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="flex flex-col md:flex-row h-full max-h-[90vh]">
+                <div class="md:w-1/2 relative bg-gray-100 min-h-[250px]">
+                    <img id="detailFotoProduk" src="" alt="Foto Produk"
+                        class="absolute inset-0 w-full h-full object-cover">
+                </div>
+                <div class="md:w-1/2 p-6 md:p-8 flex flex-col justify-center overflow-y-auto">
+                    <span id="detailKategoriProduk"
+                        class="text-xs font-bold text-orange-600 uppercase tracking-wider mb-2"></span>
+                    <h3 id="detailNamaProduk" class="text-2xl font-bold text-gray-900 mb-2"></h3>
+                    <p id="detailHargaProduk" class="text-xl font-bold text-orange-600 mb-6"></p>
+
+                    <div class="mb-8">
+                        <h4 class="text-sm font-semibold text-gray-800 mb-2 border-b pb-2">Deskripsi Produk</h4>
+                        <p id="detailDeskripsiProduk" class="text-gray-600 text-sm leading-relaxed"></p>
+                    </div>
+
+                    <div class="mt-auto pt-4 flex gap-3">
+                        <a href="https://wa.me/6281234567890?text=Halo,%20saya%20tertarik%20dengan%20produk%20ini."
+                            target="_blank"
+                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fab fa-whatsapp text-lg"></i> Hubungi Penjual
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Fungsi Buka/Tutup Modal Pendaftaran ---
+        function bukaModalDaftar() {
+            const modal = document.getElementById('modalDaftar');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function tutupModalDaftar() {
+            const modal = document.getElementById('modalDaftar');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // --- Fungsi Modal Detail Produk ---
+        function bukaModalDetailProduk(nama, kategori, harga, deskripsi, foto) {
+            document.getElementById('detailNamaProduk').innerText = nama;
+            document.getElementById('detailKategoriProduk').innerText = kategori;
+            document.getElementById('detailHargaProduk').innerText = harga;
+            document.getElementById('detailDeskripsiProduk').innerText = deskripsi;
+            document.getElementById('detailFotoProduk').src = foto;
+            document.getElementById('detailFotoProduk').alt = nama;
+
+            const modal = document.getElementById('modalDetailProduk');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function tutupModalDetailProduk() {
+            const modal = document.getElementById('modalDetailProduk');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Handler pengiriman form (Dijalankan setelah halaman dimuat)
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('formPendaftaran');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const btn = document.getElementById('btnKirimDaftar');
+
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-circle-notch animate-spin"></i> Memproses...';
+
+                    // Simulasi pengiriman data
+                    setTimeout(() => {
+                        alert("Terima kasih! Pendaftaran UMKM Anda telah kami terima. Tim kami akan menghubungi Anda melalui WhatsApp.");
+                        this.reset();
+                        tutupModalDaftar();
+                        btn.disabled = false;
+                        btn.innerHTML = 'Daftar Sekarang <i class="fas fa-arrow-right"></i>';
+                    }, 2000);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

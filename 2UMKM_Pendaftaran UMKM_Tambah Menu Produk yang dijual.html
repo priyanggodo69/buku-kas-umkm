@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah UMKM - Center Celebes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 100%);
+        }
+
+        /* Memberikan jarak agar judul tidak tertutup navbar yang melayang saat scroll */
+        #katalog,
+        #beranda,
+        #tentang {
+            scroll-margin-top: 5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <div class="flex items-center">
+                <span class="text-2xl font-bold text-orange-600">Rumah<span class="text-gray-900">UMKM</span><span
+                        class="text-blue-600">CenterCelebes</span></span>
+            </div>
+
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#beranda" id="navBeranda"
+                    class="text-gray-600 font-medium hover:text-orange-600 transition">Beranda</a>
+                <a href="#katalog" id="navKatalog"
+                    class="text-gray-600 font-medium hover:text-orange-600 transition">Katalog</a>
+                <a href="#tentang" class="text-gray-600 font-medium hover:text-orange-600 transition">Tentang Kami</a>
+            </div>
+
+            <div id="authStatus" class="flex items-center gap-4"></div>
+        </div>
+    </nav>
+
+
+
+    <section id="beranda" class="hero-gradient py-20">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 text-center md:text-left">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">Produk <span
+                        class="text-orange-600">Sulawesi Tengah</span> Mendunia</h1>
+                <p class="text-lg text-gray-600 mb-8">Wadah digitalisasi produk unggulan lokal untuk akses pasar yang
+                    lebih luas dan profesional.</p>
+                <a href="#katalog"
+                    class="bg-gray-900 text-white px-10 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-xl inline-block">Jelajahi
+                    Produk</a>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600"
+                    class="rounded-2xl shadow-2xl rotate-3 border-8 border-white w-80 h-80 object-cover">
+            </div>
+        </div>
+    </section>
+
+    <section id="katalog" class="py-24 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+                <div>
+                    <h2 id="judulKatalog" class="text-3xl font-bold text-gray-900 mb-2">Katalog Produk Lokal</h2>
+                    <p class="text-gray-500">Temukan keunikan produk asli dari berbagai wilayah di Sulawesi Tengah.</p>
+                </div>
+
+                <div class="flex items-center bg-gray-50 p-2 rounded-2xl border border-gray-100">
+                    <span class="text-xs font-bold text-gray-400 px-3 uppercase">Urutkan:</span>
+                    <select id="filterHarga" onchange="tampilkanKatalog()"
+                        class="bg-transparent text-sm font-bold outline-none cursor-pointer pr-4">
+                        <option value="terbaru">Terbaru</option>
+                        <option value="murah">Harga Terendah</option>
+                        <option value="mahal">Harga Tertinggi</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="containerKatalog" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+
+            <div id="katalogKosong"
+                class="hidden flex flex-col items-center justify-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-box-open text-3xl text-gray-300"></i>
+                </div>
+                <p class="text-gray-500 font-medium">Belum ada produk yang ditambahkan oleh mitra.</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="modalDaftar"
+        class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/60 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-8 my-auto shadow-2xl relative">
+            <button onclick="tutupModal('modalDaftar')"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Pendaftaran Mitra Baru</h3>
+            <form id="formPendaftaran" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" name="username" placeholder="Username" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="password" name="password" placeholder="Password" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="text" name="nama_pemilik" placeholder="Nama Lengkap Pemilik" required
+                    class="p-3 border rounded-xl outline-none md:col-span-2">
+                <input type="text" name="nama_toko" placeholder="Nama Toko/UMKM" required
+                    class="p-3 border rounded-xl outline-none md:col-span-2">
+
+                <div class="md:col-span-2 p-3 border rounded-xl bg-gray-50">
+                    <p class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Kategori Produk Utama:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="kategori_mitra" value="Makanan"> Makanan
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="kategori_mitra" value="Minuman"> Minuman
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="kategori_mitra" value="Kerajinan"> Kerajinan
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="kategori_mitra" value="Fashion"> Fashion
+                        </label>
+                    </div>
+                </div>
+                <select name="kota" required class="p-3 border rounded-xl outline-none bg-white">
+                    <option value="">Pilih Kabupaten/Kota</option>
+                    <option>Kota Palu</option>
+                    <option>Kab. Sigi</option>
+                    <option>Kab. Donggala</option>
+                    <option>Kab. Poso</option>
+                    <option>Kab. Parigi Moutong</option>
+                    <option>Kab. Banggai</option>
+                    <option>Kab. Morowali</option>
+                    <option>Kab. Tolitoli</option>
+                </select>
+                <input type="tel" name="whatsapp" placeholder="Nomor WhatsApp" required
+                    class="p-3 border rounded-xl outline-none">
+
+                <textarea name="alamat" placeholder="Alamat Lengkap" required
+                    class="p-3 border rounded-xl outline-none md:col-span-2 h-24 resize-none"></textarea>
+
+                <div class="md:col-span-2 flex flex-col gap-3 mt-4">
+                    <button type="submit"
+                        class="w-full bg-orange-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-orange-700 transition">Daftar
+                        Sekarang</button>
+                    <button type="button" onclick="tutupModal('modalDaftar')"
+                        class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalLogin" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 bg-black/60">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-6 text-center">Masuk Akun Mitra</h3>
+            <form id="formLogin" class="space-y-4">
+                <input type="text" id="loginUser" placeholder="Username" required
+                    class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="password" id="loginPass" placeholder="Password" required
+                    class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-orange-500">
+                <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold shadow-lg">Masuk
+                    & Kelola Produk</button>
+                <button type="button" onclick="tutupModal('modalLogin')"
+                    class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalTambahProduk"
+        class="fixed inset-0 z-[130] hidden flex items-center justify-center p-4 bg-black/60 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 my-auto shadow-2xl relative">
+            <button onclick="tutupModal('modalTambahProduk')"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Tambah Produk Baru</h3>
+
+            <form id="formProduk" class="space-y-4">
+                <input type="text" id="namaProduk" placeholder="Nama Produk/Jasa" required
+                    class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-orange-500">
+
+                <div class="p-3 border rounded-xl bg-gray-50">
+                    <p class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Foto Produk:</p>
+                    <input type="file" id="gambarProduk" accept="image/*" required
+                        class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 cursor-pointer">
+                </div>
+
+                <div class="p-3 border rounded-xl bg-gray-50">
+                    <p class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Pilih
+                        Kategori:</p>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-left">
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="kategori"
+                                value="Makanan & Minuman"> Makanan/Minuman</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="kategori"
+                                value="Fashion & Kain"> Fashion</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="kategori"
+                                value="Kerajinan Tangan"> Kerajinan</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="kategori"
+                                value="Jasa"> Jasa</label>
+                    </div>
+                </div>
+
+                <input type="number" id="hargaProduk" placeholder="Harga (Rp)" required
+                    class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-orange-500">
+
+                <textarea id="detailProduk" placeholder="Detail singkat produk..." required
+                    class="w-full p-3 border rounded-xl h-24 resize-none outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+
+                <div class="flex flex-col gap-3 pt-2">
+                    <button type="submit"
+                        class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-orange-700 transition">Simpan
+                        Produk</button>
+                    <button type="button" onclick="tutupModal('modalTambahProduk')"
+                        class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalEditProduk"
+        class="fixed inset-0 z-[130] hidden flex items-center justify-center p-4 bg-black/60 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 my-auto shadow-2xl relative">
+            <button onclick="tutupModal('modalEditProduk')"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Edit Produk</h3>
+
+            <form id="formEditProduk" class="space-y-4">
+                <input type="hidden" id="editIndex">
+                <input type="text" id="editNamaProduk" placeholder="Nama Produk/Jasa" required
+                    class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+
+                <div class="p-3 border rounded-xl bg-gray-50">
+                    <p class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Foto Produk
+                        (Opsional):</p>
+                    <input type="file" id="editGambarProduk" accept="image/*"
+                        class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    <input type="hidden" id="editGambarExisting">
+                </div>
+
+                <div class="p-3 border rounded-xl bg-gray-50">
+                    <p class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Pilih
+                        Kategori:</p>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-left">
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="editKategori"
+                                value="Makanan & Minuman"> Makanan/Minuman</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="editKategori"
+                                value="Fashion & Kain"> Fashion</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="editKategori"
+                                value="Kerajinan Tangan"> Kerajinan</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="editKategori"
+                                value="Jasa"> Jasa</label>
+                    </div>
+                </div>
+
+                <input type="number" id="editHargaProduk" placeholder="Harga (Rp)" required
+                    class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+
+                <textarea id="editDetailProduk" placeholder="Detail singkat produk..." required
+                    class="w-full p-3 border rounded-xl h-24 resize-none outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+
+                <div class="flex flex-col gap-3 pt-2">
+                    <button type="submit"
+                        class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-blue-700 transition">Simpan
+                        Perubahan</button>
+                    <button type="button" onclick="tutupModal('modalEditProduk')"
+                        class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-bold">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // FUNGSI DASAR MODAL
+        function bukaModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function tutupModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // UPDATE UI NAVBAR
+        function updateNavbar() {
+            const status = document.getElementById('authStatus');
+            const navBeranda = document.getElementById('navBeranda');
+            const navKatalog = document.getElementById('navKatalog');
+            const judulKatalog = document.getElementById('judulKatalog');
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (user) {
+                if (navBeranda) navBeranda.classList.add('hidden');
+                if (navKatalog) navKatalog.textContent = 'Produk yang Dijual';
+                if (judulKatalog) judulKatalog.textContent = 'Produk yang Dijual';
+                status.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="text-right hidden sm:block leading-tight">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Pemilik: ${user.nama_pemilik}</p>
+                            <p class="text-sm font-bold text-orange-600">${user.nama_toko}</p>
+                        </div>
+                        <a href="LK_UMKM2.html" class="bg-teal-600 text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-teal-700 transition">
+                            <i class="fas fa-book mr-1"></i> Catat Transaksi
+                        </a>
+                        <button onclick="bukaModal('modalTambahProduk')" class="bg-orange-600 text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-orange-700 transition">
+                            <i class="fas fa-plus mr-1"></i> Tambah Produk
+                        </button>
+                        <button onclick="prosesLogout()" class="text-red-500 font-bold text-xs border-l pl-3 ml-2 hover:underline">Keluar</button>
+                    </div>`;
+            } else {
+                if (navBeranda) navBeranda.classList.remove('hidden');
+                if (navKatalog) navKatalog.textContent = 'Katalog';
+                if (judulKatalog) judulKatalog.textContent = 'Katalog Produk Lokal';
+                status.innerHTML = `
+                    <button onclick="bukaModal('modalLogin')" class="text-gray-600 font-bold text-sm hover:text-orange-600 transition">Login</button>
+                    <button onclick="bukaModal('modalDaftar')" class="bg-orange-600 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-orange-700 transition">Gabung Mitra</button>`;
+            }
+        }
+
+        function tampilkanKatalog() {
+            const container = document.getElementById('containerKatalog');
+            const emptyState = document.getElementById('katalogKosong');
+            const filter = document.getElementById('filterHarga').value;
+            let dataProduk = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+
+            // Filter produk berdasarkan user yang sedang login
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) {
+                dataProduk = dataProduk.filter(item => item.pemilik === user.nama_toko);
+            }
+
+            if (filter === 'murah') dataProduk.sort((a, b) => a.harga - b.harga);
+            else if (filter === 'mahal') dataProduk.sort((a, b) => b.harga - a.harga);
+            else if (filter === 'terbaru') dataProduk.reverse();
+
+            if (dataProduk.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.innerHTML = dataProduk.map((item) => {
+                const tags = item.kategori.split(', ').map(kat =>
+                    `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-lg font-bold uppercase tracking-tight">${kat}</span>`
+                ).join(' ');
+
+                const dbUMKM = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
+                const waOwner = dbUMKM.find(u => u.nama_toko === item.pemilik)?.whatsapp || '628123456789';
+
+                let originalKatalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+                let realIndex = originalKatalog.findIndex(p => p.nama === item.nama && p.pemilik === item.pemilik);
+
+                let actionButtons = `
+                        <a href="https://wa.me/${waOwner}" target="_blank" class="bg-orange-600 text-white p-4 rounded-2xl hover:bg-gray-900 transition shadow-lg shadow-orange-200">
+                            <i class="fab fa-whatsapp text-xl"></i>
+                        </a>`;
+
+                if (user && item.pemilik === user.nama_toko) {
+                    actionButtons = `
+                    <div class="flex gap-2">
+                        <button onclick="bukaModalEdit(${realIndex})" class="bg-blue-600 text-white p-4 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                            <i class="fas fa-edit text-xl"></i>
+                        </button>
+                        <button onclick="hapusProduk(${realIndex})" class="bg-red-600 text-white p-4 rounded-2xl hover:bg-red-700 transition shadow-lg shadow-red-200">
+                            <i class="fas fa-trash text-xl"></i>
+                        </button>
+                        ${actionButtons}
+                    </div>`;
+                }
+
+                return `
+                <div class="group bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col h-full">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="${item.gambar}" alt="${item.nama}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 left-4 flex flex-wrap gap-2">${tags}</div>
+                    </div>
+                    <div class="p-6 flex-grow text-left">
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest mb-1">${item.pemilik}</p>
+                        <h4 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition">${item.nama}</h4>
+                        <p class="text-gray-500 text-sm line-clamp-2 leading-relaxed">${item.detail}</p>
+                    </div>
+                    <div class="p-6 pt-0 flex items-center justify-between mt-auto">
+                        <div class="text-left">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Harga</p>
+                            <p class="text-2xl font-black text-gray-900 italic">Rp ${Number(item.harga).toLocaleString('id-ID')}</p>
+                        </div>
+                        ${actionButtons}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // LOGIKA PENDAFTARAN
+        document.getElementById('formPendaftaran').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const checkboxes = document.querySelectorAll('input[name="kategori_mitra"]:checked');
+            const kategoriTerpilih = Array.from(checkboxes).map(cb => cb.value);
+
+            if (kategoriTerpilih.length === 0) return alert("Pilih minimal satu kategori!");
+
+            const data = {
+                username: this.username.value,
+                password: this.password.value,
+                nama_pemilik: this.nama_pemilik.value,
+                nama_toko: this.nama_toko.value,
+                kategori: kategoriTerpilih.join(", "),
+                kota: this.kota.value,
+                whatsapp: this.whatsapp.value,
+                alamat: this.alamat.value
+            };
+
+            let db = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
+            db.push(data);
+            localStorage.setItem('databaseUMKM', JSON.stringify(db));
+
+            alert(`Selamat bergabung, ${data.nama_pemilik}!`);
+            tutupModal('modalDaftar');
+            bukaModal('modalLogin');
+        });
+
+        // LOGIKA LOGIN
+        document.getElementById('formLogin').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            const db = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
+            const akun = db.find(a => a.username === u && a.password === p);
+
+            if (akun) {
+                localStorage.setItem('currentUser', JSON.stringify(akun));
+                location.reload();
+            } else alert("Username atau Password salah!");
+        });
+
+        // LOGIKA TAMBAH PRODUK (DENGAN BASE64)
+        document.getElementById('formProduk').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('gambarProduk');
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            const checkboxKategori = document.querySelectorAll('input[name="kategori"]:checked');
+            let kategoriTerpilih = Array.from(checkboxKategori).map(item => item.value);
+
+            if (kategoriTerpilih.length === 0) return alert("Pilih minimal satu kategori!");
+
+            reader.onloadend = () => {
+                const produk = {
+                    nama: document.getElementById('namaProduk').value,
+                    kategori: kategoriTerpilih.join(", "),
+                    harga: document.getElementById('hargaProduk').value,
+                    detail: document.getElementById('detailProduk').value,
+                    gambar: reader.result,
+                    pemilik: JSON.parse(localStorage.getItem('currentUser')).nama_toko
+                };
+
+                let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+                katalog.push(produk);
+                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
+
+                alert("Produk berhasil disimpan!");
+                tutupModal('modalTambahProduk');
+                this.reset();
+                tampilkanKatalog();
+            };
+
+            if (file) reader.readAsDataURL(file);
+            else alert("Pilih foto produk!");
+        });
+
+        function bukaModalEdit(index) {
+            let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+            let produk = katalog[index];
+            if (!produk) return;
+
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editNamaProduk').value = produk.nama;
+            document.getElementById('editHargaProduk').value = produk.harga;
+            document.getElementById('editDetailProduk').value = produk.detail;
+            document.getElementById('editGambarExisting').value = produk.gambar;
+
+            const checkboxKategori = document.querySelectorAll('input[name="editKategori"]');
+            const kategoriProduk = produk.kategori.split(', ');
+            checkboxKategori.forEach(cb => {
+                cb.checked = kategoriProduk.includes(cb.value);
+            });
+
+            bukaModal('modalEditProduk');
+        }
+
+        document.getElementById('formEditProduk').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const index = document.getElementById('editIndex').value;
+            const fileInput = document.getElementById('editGambarProduk');
+            const file = fileInput.files[0];
+            const existingImage = document.getElementById('editGambarExisting').value;
+
+            const checkboxKategori = document.querySelectorAll('input[name="editKategori"]:checked');
+            let kategoriTerpilih = Array.from(checkboxKategori).map(item => item.value);
+
+            if (kategoriTerpilih.length === 0) return alert("Pilih minimal satu kategori!");
+
+            let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+
+            const saveEditedProduct = (gambarBase64) => {
+                katalog[index] = {
+                    ...katalog[index],
+                    nama: document.getElementById('editNamaProduk').value,
+                    kategori: kategoriTerpilih.join(", "),
+                    harga: document.getElementById('editHargaProduk').value,
+                    detail: document.getElementById('editDetailProduk').value,
+                    gambar: gambarBase64
+                };
+                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
+                alert("Perubahan produk berhasil disimpan!");
+                tutupModal('modalEditProduk');
+                this.reset();
+                tampilkanKatalog();
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => saveEditedProduct(reader.result);
+                reader.readAsDataURL(file);
+            } else {
+                saveEditedProduct(existingImage);
+            }
+        });
+
+        function hapusProduk(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+                let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+                katalog.splice(index, 1);
+                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
+                alert("Produk berhasil dihapus!");
+                tampilkanKatalog();
+            }
+        }
+
+        function prosesLogout() {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                localStorage.removeItem('currentUser');
+                location.reload();
+            }
+        }
+
+        window.onload = function () {
+            updateNavbar();
+            tampilkanKatalog();
+        };
+    </script>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
+            <div>
+                <h4 class="text-xl font-bold mb-6">Rumah UMKM</h4>
+                <p class="text-gray-400">Mendukung pertumbuhan ekonomi mandiri melalui pemberdayaan pengusaha kecil dan
+                    menengah di Sulawesi Tengah.</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Tautan Cepat</h4>
+                <ul class="space-y-4 text-gray-400">
+                    <li><a href="#beranda" class="hover:text-white transition">Beranda</a></li>
+                    <li><a href="#katalog" class="hover:text-white transition">Katalog</a></li>
+                    <li><a href="#" class="hover:text-white transition">Hubungi Kami</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-lg font-semibold mb-6">Ikuti Kami</h4>
+                <div class="flex justify-center md:justify-start space-x-4 text-2xl">
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+            &copy; 2026 Rumah UMKM Digital - Center Celebes. Dibuat dengan semangat lokal.
+        </div>
+    </footer>
+</body>
+
+</html>

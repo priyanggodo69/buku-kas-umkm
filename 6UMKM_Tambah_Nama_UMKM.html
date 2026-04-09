@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah UMKM Center Celebes - Digitalisasi Ekonomi Lokal Sulawesi Tengah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-orange-600">Rumah<span class="text-gray-900">UMKM<span
+                                class="bold text-blue-600 ml-1">Center Celebes</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#beranda" class="hover:text-orange-600 transition">Beranda</a>
+                    <a href="#katalog" class="hover:text-orange-600 transition">Katalog</a>
+                    <a href="javascript:void(0)" onclick="bukaModalDaftar()"
+                        class="bg-orange-600 text-white px-5 py-2 rounded-full font-medium hover:bg-orange-700 transition">Daftar
+                        Sekarang</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="beranda" class="hero-gradient py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                    Bawa Produk Lokal Sulawesi Tengah ke <span class="text-orange-600">Level Global</span>
+                </h1>
+                <p class="text-lg text-gray-600 mb-8">Wadah kolaborasi untuk memperkenalkan produk unggulan Sulawesi
+                    Tengah ke pasar modern.</p>
+                <a href="#katalog"
+                    class="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition">Jelajahi Produk</a>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div
+                    class="w-80 h-80 md:w-96 md:h-96 bg-orange-200 rounded-2xl rotate-3 border-4 border-white shadow-xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000"
+                        class="object-cover h-full w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-4 mt-12 flex justify-between items-end">
+        <div>
+            <h2 class="text-3xl font-bold">Produk Unggulan</h2>
+            <div class="h-1 w-20 bg-orange-600 mt-2"></div>
+        </div>
+        <button onclick="bukaModalTambahProduk()"
+            class="bg-orange-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-700 transition flex items-center gap-2 shadow-lg">
+            <i class="fas fa-plus-circle"></i> Tambah Produk
+        </button>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 my-8">
+        <div class="flex flex-wrap gap-3 items-center">
+            <span class="text-sm font-bold text-gray-500 mr-2 uppercase tracking-widest">Kategori:</span>
+            <button onclick="filterKategori('Semua')"
+                class="filter-btn active bg-orange-600 text-white px-6 py-2 rounded-full text-sm font-medium transition shadow-md">Semua</button>
+            <button onclick="filterKategori('Kuliner')"
+                class="filter-btn bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full text-sm font-medium hover:border-orange-600 hover:text-orange-600 transition">Kuliner</button>
+            <button onclick="filterKategori('Fashion')"
+                class="filter-btn bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full text-sm font-medium hover:border-orange-600 hover:text-orange-600 transition">Fashion</button>
+            <button onclick="filterKategori('Kerajinan')"
+                class="filter-btn bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full text-sm font-medium hover:border-orange-600 hover:text-orange-600 transition">Kerajinan</button>
+        </div>
+    </div>
+
+    <section id="katalog" class="pb-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        </div>
+    </section>
+
+    <div id="modalTambahProduk" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="tutupModalTambahProduk()"></div>
+        <div class="bg-white rounded-3xl max-w-xl w-full relative z-10 shadow-2xl overflow-hidden">
+            <div class="bg-gray-900 p-6 text-white text-center">
+                <h2 class="text-2xl font-bold">Tambah Produk Baru</h2>
+            </div>
+            <form id="formTambahProduk" class="p-8 space-y-4">
+                <input type="text" id="inUmkm" required placeholder="Nama UMKM Anda"
+                    class="w-full px-4 py-2 rounded-xl border border-gray-200 outline-none">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="inNama" required placeholder="Nama Produk"
+                        class="w-full px-4 py-2 rounded-xl border">
+                    <input type="number" id="inHarga" required placeholder="Harga (Angka)"
+                        class="w-full px-4 py-2 rounded-xl border">
+                </div>
+                <select id="inKategori" class="w-full px-4 py-2 rounded-xl border">
+                    <option value="Kuliner">Kuliner</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Kerajinan">Kerajinan</option>
+                </select>
+                <input type="url" id="inFoto" required placeholder="URL Foto Produk"
+                    class="w-full px-4 py-2 rounded-xl border">
+                <textarea id="inDeskripsi" rows="3" required placeholder="Deskripsi..."
+                    class="w-full px-4 py-2 rounded-xl border"></textarea>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="tutupModalTambahProduk()"
+                        class="flex-1 bg-gray-100 py-3 rounded-xl">Batal</button>
+                    <button type="submit"
+                        class="flex-1 bg-orange-600 text-white font-bold py-3 rounded-xl">Simpan</button>
+                    <input type="password" id="inPassword" required placeholder="Buat Kata Sandi Hapus (untuk keamanan)"
+                        class="w-full px-4 py-2 rounded-xl border border-orange-200 outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalDetail" class="fixed inset-0 z-[140] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="tutupDetail()"></div>
+        <div
+            class="bg-white rounded-3xl max-w-2xl w-full relative z-10 shadow-2xl overflow-hidden flex flex-col md:flex-row">
+            <div class="md:w-1/2 h-64 md:h-auto"><img id="detFoto" src="" class="w-full h-full object-cover"></div>
+            <div class="md:w-1/2 p-8">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="detKategori" class="text-xs font-semibold text-orange-600 uppercase"></span>
+                    <span id="detUmkm"
+                        class="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded italic border border-blue-100"></span>
+                </div>
+                <h2 id="detNama" class="text-2xl font-bold text-gray-900"></h2>
+                <p id="detHarga" class="text-xl font-bold text-orange-600 mt-2"></p>
+                <hr class="my-4">
+                <p id="detDeskripsi" class="text-gray-600 text-sm leading-relaxed"></p>
+                <div class="flex flex-col gap-2 mt-8">
+                    <a id="detLinkBeli" href="#" target="_blank"
+                        class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold text-center hover:bg-orange-700 transition">Beli
+                        Sekarang (WhatsApp)</a>
+                    <button onclick="tutupDetail()"
+                        class="w-full bg-gray-100 py-3 rounded-xl font-semibold hover:bg-gray-200">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const NOMOR_WA = "6281234567890";
+
+        function bukaModalTambahProduk() { document.getElementById('modalTambahProduk').classList.remove('hidden'); }
+        function tutupModalTambahProduk() { document.getElementById('modalTambahProduk').classList.add('hidden'); }
+
+        function bukaDetail(nama, harga, kategori, deskripsi, img, umkm) {
+            document.getElementById('detNama').innerText = nama;
+            document.getElementById('detHarga').innerText = harga;
+            document.getElementById('detKategori').innerText = kategori;
+            document.getElementById('detDeskripsi').innerText = deskripsi;
+            document.getElementById('detFoto').src = img;
+            document.getElementById('detUmkm').innerText = "UMKM: " + (umkm || "UMKM Lokal");
+            const pesan = `Halo, saya ingin beli ${nama} dari UMKM ${umkm}. Harga: ${harga}`;
+            document.getElementById('detLinkBeli').href = `https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(pesan)}`;
+            document.getElementById('modalDetail').classList.remove('hidden');
+        }
+
+        function tutupDetail() { document.getElementById('modalDetail').classList.add('hidden'); }
+
+        document.getElementById('formTambahProduk').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const umkm = document.getElementById('inUmkm').value;
+            const nama = document.getElementById('inNama').value;
+            const harga = document.getElementById('inHarga').value;
+            const kategori = document.getElementById('inKategori').value;
+            const foto = document.getElementById('inFoto').value;
+            const deskripsi = document.getElementById('inDeskripsi').value;
+            const hargaIDR = "Rp " + parseInt(harga).toLocaleString('id-ID');
+
+            const produkBaru = { umkm, nama, harga, kategori, foto, deskripsi, hargaIDR };
+            let daftarProduk = JSON.parse(localStorage.getItem('produkUMKM')) || [];
+            daftarProduk.push(produkBaru);
+            localStorage.setItem('produkUMKM', JSON.stringify(daftarProduk));
+            alert("Produk Berhasil Disimpan!");
+            location.reload();
+        });
+
+        function muatProduk() {
+            const container = document.querySelector('#katalog .grid');
+            container.innerHTML = '';
+            let daftarProduk = JSON.parse(localStorage.getItem('produkUMKM')) || [];
+
+            daftarProduk.forEach((p, index) => {
+                const html = `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition relative group">
+                    <button onclick="hapusProduk(${index})" 
+                            class="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition shadow-lg flex items-center justify-center z-10">
+                        <i class="fas fa-trash text-xs"></i>
+                    </button>
+                    <img src="${p.foto}" class="h-48 w-full object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-semibold text-orange-600 uppercase tracking-wider">${p.kategori}</span>
+                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-md font-medium italic">By: ${p.umkm || 'Lokal'}</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${p.nama}</h3>
+                        <p class="text-gray-500 text-sm mb-4 truncate">${p.deskripsi}</p>
+                        <div class="flex flex-col gap-3">
+                            <span class="font-bold text-lg">${p.hargaIDR}</span>
+                            <div class="flex gap-2">
+                                <button onclick="bukaDetail('${p.nama}', '${p.hargaIDR}', '${p.kategori}', '${p.deskripsi}', '${p.foto}', '${p.umkm}')" 
+                                        class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-semibold hover:bg-gray-200 transition">Detail</button>
+                                <a href="https://wa.me/${NOMOR_WA}?text=Halo, saya ingin beli ${p.nama} dari UMKM ${p.umkm}" target="_blank" 
+                                   class="flex-1 bg-orange-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-orange-700 transition text-center">Beli</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function hapusProduk(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+                let daftarProduk = JSON.parse(localStorage.getItem('produkUMKM')) || [];
+                daftarProduk.splice(index, 1);
+                localStorage.setItem('produkUMKM', JSON.stringify(daftarProduk));
+                muatProduk();
+                alert("Produk berhasil dihapus!");
+            }
+        }
+
+        function filterKategori(kategori) {
+            const cards = document.querySelectorAll('#katalog .grid > div');
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('bg-orange-600', btn.innerText === kategori);
+                btn.classList.toggle('text-white', btn.innerText === kategori);
+            });
+            cards.forEach(card => {
+                const kat = card.querySelector('span').innerText;
+                card.style.display = (kategori === 'Semua' || kat === kategori) ? 'block' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', muatProduk);
+
+        function hapusProduk(index) {
+            let daftarProduk = JSON.parse(localStorage.getItem('produkUMKM')) || [];
+            const produk = daftarProduk[index];
+
+            // 1. Minta password kepada pengguna
+            const inputPass = prompt(`Untuk menghapus "${produk.nama}", masukkan kata sandi yang Anda buat saat mendaftarkan produk ini:`);
+
+            if (inputPass === null) return; // Jika user menekan 'Batal'
+
+            // 2. Validasi password
+            if (inputPass === produk.password) {
+                if (confirm("Kata sandi cocok. Yakin ingin menghapus produk ini secara permanen?")) {
+                    daftarProduk.splice(index, 1);
+                    localStorage.setItem('produkUMKM', JSON.stringify(daftarProduk));
+                    muatProduk();
+                    alert("Produk berhasil dihapus!");
+                }
+            } else {
+                alert("Kata sandi salah! Anda tidak memiliki wewenang menghapus produk ini.");
+            }
+        }
+    </script>
+</body>
+
+</html>
