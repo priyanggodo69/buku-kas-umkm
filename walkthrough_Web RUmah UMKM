@@ -1,0 +1,31 @@
+# Walkthrough: Penerbitan Aplikasi BukuKas UMKM di Internet (Vercel)
+
+Selamat! Aplikasi BukuKas UMKM sekarang telah resmi *online* dan bisa diakses oleh siapa pun di internet melalui URL Vercel yang Anda miliki. 
+
+Berikut adalah ringkasan dari sistem baru yang telah kita terapkan untuk mencapai hal ini.
+
+## Arsitektur Aplikasi Sebelumnya (Lokal)
+Sebelumnya, aplikasi Anda membutuhkan dua komponen yang harus dinyalakan secara manual:
+1. Anda harus membuka file HTML langsung di komputer (contoh `file:///C:/Users/...`)
+2. Anda harus menjalankan terminal khusus dengan perintah `node server.js` secara terus-menerus. Jika terminal ini ditutup, maka fitur login dan database tidak akan berfungsi.
+
+Metode ini sangat cocok untuk tahap pengembangan awal, namun tidak memungkinkan untuk diakses oleh perangkat lain (seperti dari HP).
+
+## Arsitektur Aplikasi Saat Ini (Vercel + Supabase)
+Untuk mendistribusikan aplikasi secara bebas di internet, kita harus menggunakan layanan berwujud Server (Hosting). 
+
+> [!TIP]
+> **Apa itu Vercel Serverless Functions?**
+> Platform Vercel tidak dikonfigurasi untuk menjalankan server secara konstan (long-running) seperti Node.js murni Anda. Sebaliknya, Vercel bertindak layaknya sakelar pintar — fitur backend akan dimuat ke server memori hanya sekilas setiap ada pengguna yang meminta transaksi.
+
+### Transformasi Kode 
+
+Untuk mengakomodasi arsitektur di Vercel, berikut perubahan yang sudah kita lakukan:
+
+1. **Membedah Endpoint Server:**  Kita telah meniadakan dan menukar `server.js` dengan sistem modular di dalam folder bernama `/api/`. Sekarang, setiap fungsionalitas (seperti login, registrasi, catat transaksi) memiliki file tersendiri (seperti `/api/login.js`). Vercel akan otomatis mengenali folder ini sebagai Serverless Functions.
+2. **Koneksi Database Global (Supabase):** Kita kembali menyambungkan integrasi *PostgreSQL Database* Anda yang ada di cloud Supabase. Namun, demi melindungi keamanannya (karena ada *password*), kita mendeklarasikannya melalui **Environment Variables** di Vercel dengan nama `DATABASE_URL`.
+3. **Penyempurnaan Frontend:** File `index.html` (untuk Halaman Utama Rumah UMKM) dan `lk_umkm.html` (Halaman Dasbor Transaksi BukuKas) telah disesuaikan agar alamat "pengambilan data" mereka menjadi relatif (`/api`), tidak lagi mengarah ke `http://localhost:3000`.
+4. **Push Terpadu di GitHub:** Seluruh pekerjaan telah diamankan melalui Git Control dan tergabung dengan *repository* utama di GitHub Anda. GitHub bertindak sebagai "dapur" Anda; kapanpun Anda mengubah kode di GitHub, Vercel secara otomatis akan memahaminya dan melakukan pembaruan web secara langsung (*Continuous Deployment*).
+
+> [!NOTE]
+> Mulai sekarang, setiap kali Anda ingin menggunakan aplikasinya secara normal, gunakan **tautan URL dari Vercel**. Anda sudah bisa menutup terminal `node server.js` dan bahkan menutup editor program di komputer, karena segalanya sudah berjalan mandiri sepenuhnya di atas web! 
