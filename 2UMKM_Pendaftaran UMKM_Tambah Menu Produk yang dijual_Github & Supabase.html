@@ -238,7 +238,7 @@
             <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Edit Produk</h3>
 
             <form id="formEditProduk" class="space-y-4">
-                <input type="hidden" id="editIndex">
+                <input type="hidden" id="editProductId">
                 <input type="text" id="editNamaProduk" placeholder="Nama Produk/Jasa" required
                     class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
 
@@ -283,7 +283,19 @@
     </div>
 
     <script>
-        // FUNGSI DASAR MODAL
+        // =============================================
+        //  KONFIGURASI
+        // =============================================
+        const API_BASE = 'http://localhost:3000/api';
+
+        // =============================================
+        //  STATE
+        // =============================================
+        let allProducts = []; // data dari server
+
+        // =============================================
+        //  FUNGSI DASAR MODAL
+        // =============================================
         function bukaModal(id) {
             document.getElementById(id).classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -294,7 +306,32 @@
             document.body.style.overflow = 'auto';
         }
 
-        // UPDATE UI NAVBAR
+        // =============================================
+        //  NOTIFIKASI
+        // =============================================
+        function showNotif(message, type = 'success') {
+            const colors = {
+                success: 'bg-gray-900 text-white',
+                error: 'bg-red-600 text-white'
+            };
+            const icons = {
+                success: 'fa-check-circle text-emerald-400',
+                error: 'fa-times-circle text-red-200'
+            };
+            const notif = document.createElement('div');
+            notif.className = `fixed bottom-4 right-4 ${colors[type]} px-6 py-3 rounded-xl shadow-2xl z-50 transform transition-all translate-y-0 opacity-100 flex items-center gap-3`;
+            notif.innerHTML = `<i class="fas ${icons[type]}"></i> ${message}`;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                notif.style.opacity = '0';
+                notif.style.transform = 'translateY(1rem)';
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+
+        // =============================================
+        //  UPDATE UI NAVBAR
+        // =============================================
         function updateNavbar() {
             const status = document.getElementById('authStatus');
             const navBeranda = document.getElementById('navBeranda');
@@ -330,21 +367,26 @@
             }
         }
 
+        // =============================================
+        //  TAMPILKAN KATALOG (dari data server)
+        // =============================================
         function tampilkanKatalog() {
             const container = document.getElementById('containerKatalog');
             const emptyState = document.getElementById('katalogKosong');
             const filter = document.getElementById('filterHarga').value;
-            let dataProduk = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
-
-            // Filter produk berdasarkan user yang sedang login
             const user = JSON.parse(localStorage.getItem('currentUser'));
+
+            // Clone array supaya tidak mengubah data asli
+            let dataProduk = [...allProducts];
+
+            // Jika login, tampilkan hanya produk milik sendiri
             if (user) {
                 dataProduk = dataProduk.filter(item => item.pemilik === user.nama_toko);
             }
 
             if (filter === 'murah') dataProduk.sort((a, b) => a.harga - b.harga);
             else if (filter === 'mahal') dataProduk.sort((a, b) => b.harga - a.harga);
-            else if (filter === 'terbaru') dataProduk.reverse();
+            // 'terbaru' sudah diurutkan dari server (ORDER BY id DESC)
 
             if (dataProduk.length === 0) {
                 container.innerHTML = '';
@@ -354,15 +396,11 @@
 
             emptyState.classList.add('hidden');
             container.innerHTML = dataProduk.map((item) => {
-                const tags = item.kategori.split(', ').map(kat =>
+                const tags = (item.kategori || '').split(', ').map(kat =>
                     `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-lg font-bold uppercase tracking-tight">${kat}</span>`
                 ).join(' ');
 
-                const dbUMKM = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
-                const waOwner = dbUMKM.find(u => u.nama_toko === item.pemilik)?.whatsapp || '628123456789';
-
-                let originalKatalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
-                let realIndex = originalKatalog.findIndex(p => p.nama === item.nama && p.pemilik === item.pemilik);
+                const waOwner = item.whatsapp || '628123456789';
 
                 let actionButtons = `
                         <a href="https://wa.me/${waOwner}" target="_blank" class="bg-orange-600 text-white p-4 rounded-2xl hover:bg-gray-900 transition shadow-lg shadow-orange-200">
@@ -372,13 +410,15 @@
                 if (user && item.pemilik === user.nama_toko) {
                     actionButtons = `
                     <div class="flex gap-2">
-                        <button onclick="bukaModalEdit(${realIndex})" class="bg-blue-600 text-white p-4 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                        <button onclick="bukaModalEdit(${item.id})" class="bg-blue-600 text-white p-4 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">
                             <i class="fas fa-edit text-xl"></i>
                         </button>
-                        <button onclick="hapusProduk(${realIndex})" class="bg-red-600 text-white p-4 rounded-2xl hover:bg-red-700 transition shadow-lg shadow-red-200">
+                        <button onclick="hapusProduk(${item.id})" class="bg-red-600 text-white p-4 rounded-2xl hover:bg-red-700 transition shadow-lg shadow-red-200">
                             <i class="fas fa-trash text-xl"></i>
                         </button>
-                        ${actionButtons}
+                        <a href="https://wa.me/${waOwner}" target="_blank" class="bg-orange-600 text-white p-4 rounded-2xl hover:bg-gray-900 transition shadow-lg shadow-orange-200">
+                            <i class="fab fa-whatsapp text-xl"></i>
+                        </a>
                     </div>`;
                 }
 
@@ -404,8 +444,25 @@
             }).join('');
         }
 
-        // LOGIKA PENDAFTARAN
-        document.getElementById('formPendaftaran').addEventListener('submit', function (e) {
+        // =============================================
+        //  FETCH PRODUK DARI SERVER
+        // =============================================
+        async function fetchProducts() {
+            try {
+                const res = await fetch(`${API_BASE}/products`);
+                if (!res.ok) throw new Error('Gagal mengambil produk');
+                allProducts = await res.json();
+                tampilkanKatalog();
+            } catch (err) {
+                console.error(err);
+                showNotif('Gagal terhubung ke server. Pastikan server berjalan!', 'error');
+            }
+        }
+
+        // =============================================
+        //  LOGIKA PENDAFTARAN
+        // =============================================
+        document.getElementById('formPendaftaran').addEventListener('submit', async function (e) {
             e.preventDefault();
             const checkboxes = document.querySelectorAll('input[name="kategori_mitra"]:checked');
             const kategoriTerpilih = Array.from(checkboxes).map(cb => cb.value);
@@ -423,78 +480,127 @@
                 alamat: this.alamat.value
             };
 
-            let db = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
-            db.push(data);
-            localStorage.setItem('databaseUMKM', JSON.stringify(db));
+            try {
+                const res = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
 
-            alert(`Selamat bergabung, ${data.nama_pemilik}!`);
-            tutupModal('modalDaftar');
-            bukaModal('modalLogin');
+                if (!res.ok) {
+                    alert(result.error || 'Pendaftaran gagal!');
+                    return;
+                }
+
+                showNotif(`Selamat bergabung, ${data.nama_pemilik}!`);
+                this.reset();
+                tutupModal('modalDaftar');
+                bukaModal('modalLogin');
+            } catch (err) {
+                console.error(err);
+                alert('Gagal terhubung ke server!');
+            }
         });
 
-        // LOGIKA LOGIN
-        document.getElementById('formLogin').addEventListener('submit', function (e) {
+        // =============================================
+        //  LOGIKA LOGIN
+        // =============================================
+        document.getElementById('formLogin').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const u = document.getElementById('loginUser').value;
-            const p = document.getElementById('loginPass').value;
-            const db = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
-            const akun = db.find(a => a.username === u && a.password === p);
+            const username = document.getElementById('loginUser').value;
+            const password = document.getElementById('loginPass').value;
 
-            if (akun) {
-                localStorage.setItem('currentUser', JSON.stringify(akun));
-                location.reload();
-            } else alert("Username atau Password salah!");
+            try {
+                const res = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const result = await res.json();
+
+                if (!res.ok) {
+                    alert(result.error || 'Login gagal!');
+                    return;
+                }
+
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                tutupModal('modalLogin');
+                updateNavbar();
+                tampilkanKatalog();
+                showNotif('Login berhasil!');
+            } catch (err) {
+                console.error(err);
+                alert('Gagal terhubung ke server!');
+            }
         });
 
-        // LOGIKA TAMBAH PRODUK (DENGAN BASE64)
-        document.getElementById('formProduk').addEventListener('submit', function (e) {
+        // =============================================
+        //  LOGIKA TAMBAH PRODUK
+        // =============================================
+        document.getElementById('formProduk').addEventListener('submit', async function (e) {
             e.preventDefault();
             const fileInput = document.getElementById('gambarProduk');
             const file = fileInput.files[0];
-            const reader = new FileReader();
 
             const checkboxKategori = document.querySelectorAll('input[name="kategori"]:checked');
             let kategoriTerpilih = Array.from(checkboxKategori).map(item => item.value);
 
             if (kategoriTerpilih.length === 0) return alert("Pilih minimal satu kategori!");
+            if (!file) return alert("Pilih foto produk!");
 
-            reader.onloadend = () => {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const user = JSON.parse(localStorage.getItem('currentUser'));
                 const produk = {
                     nama: document.getElementById('namaProduk').value,
                     kategori: kategoriTerpilih.join(", "),
                     harga: document.getElementById('hargaProduk').value,
                     detail: document.getElementById('detailProduk').value,
                     gambar: reader.result,
-                    pemilik: JSON.parse(localStorage.getItem('currentUser')).nama_toko
+                    pemilik: user.nama_toko
                 };
 
-                let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
-                katalog.push(produk);
-                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
+                try {
+                    const res = await fetch(`${API_BASE}/products`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(produk)
+                    });
+                    const result = await res.json();
 
-                alert("Produk berhasil disimpan!");
-                tutupModal('modalTambahProduk');
-                this.reset();
-                tampilkanKatalog();
+                    if (!res.ok) {
+                        alert(result.error || 'Gagal menyimpan produk!');
+                        return;
+                    }
+
+                    showNotif('Produk berhasil disimpan!');
+                    tutupModal('modalTambahProduk');
+                    this.reset();
+                    await fetchProducts();
+                } catch (err) {
+                    console.error(err);
+                    alert('Gagal terhubung ke server!');
+                }
             };
-
-            if (file) reader.readAsDataURL(file);
-            else alert("Pilih foto produk!");
+            reader.readAsDataURL(file);
         });
 
-        function bukaModalEdit(index) {
-            let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
-            let produk = katalog[index];
+        // =============================================
+        //  LOGIKA EDIT PRODUK
+        // =============================================
+        function bukaModalEdit(productId) {
+            const produk = allProducts.find(p => p.id === productId);
             if (!produk) return;
 
-            document.getElementById('editIndex').value = index;
+            document.getElementById('editProductId').value = productId;
             document.getElementById('editNamaProduk').value = produk.nama;
             document.getElementById('editHargaProduk').value = produk.harga;
             document.getElementById('editDetailProduk').value = produk.detail;
             document.getElementById('editGambarExisting').value = produk.gambar;
 
             const checkboxKategori = document.querySelectorAll('input[name="editKategori"]');
-            const kategoriProduk = produk.kategori.split(', ');
+            const kategoriProduk = (produk.kategori || '').split(', ');
             checkboxKategori.forEach(cb => {
                 cb.checked = kategoriProduk.includes(cb.value);
             });
@@ -502,9 +608,9 @@
             bukaModal('modalEditProduk');
         }
 
-        document.getElementById('formEditProduk').addEventListener('submit', function (e) {
+        document.getElementById('formEditProduk').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const index = document.getElementById('editIndex').value;
+            const productId = document.getElementById('editProductId').value;
             const fileInput = document.getElementById('editGambarProduk');
             const file = fileInput.files[0];
             const existingImage = document.getElementById('editGambarExisting').value;
@@ -514,53 +620,87 @@
 
             if (kategoriTerpilih.length === 0) return alert("Pilih minimal satu kategori!");
 
-            let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
-
-            const saveEditedProduct = (gambarBase64) => {
-                katalog[index] = {
-                    ...katalog[index],
+            const doEdit = async (gambarBase64) => {
+                const payload = {
                     nama: document.getElementById('editNamaProduk').value,
                     kategori: kategoriTerpilih.join(", "),
                     harga: document.getElementById('editHargaProduk').value,
                     detail: document.getElementById('editDetailProduk').value,
-                    gambar: gambarBase64
+                    gambar: gambarBase64 || null
                 };
-                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
-                alert("Perubahan produk berhasil disimpan!");
-                tutupModal('modalEditProduk');
-                this.reset();
-                tampilkanKatalog();
+
+                try {
+                    const res = await fetch(`${API_BASE}/products/${productId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await res.json();
+
+                    if (!res.ok) {
+                        alert(result.error || 'Gagal mengubah produk!');
+                        return;
+                    }
+
+                    showNotif('Perubahan produk berhasil disimpan!');
+                    tutupModal('modalEditProduk');
+                    this.reset();
+                    await fetchProducts();
+                } catch (err) {
+                    console.error(err);
+                    alert('Gagal terhubung ke server!');
+                }
             };
 
             if (file) {
                 const reader = new FileReader();
-                reader.onloadend = () => saveEditedProduct(reader.result);
+                reader.onloadend = () => doEdit(reader.result);
                 reader.readAsDataURL(file);
             } else {
-                saveEditedProduct(existingImage);
+                doEdit(existingImage);
             }
         });
 
-        function hapusProduk(index) {
-            if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
-                let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
-                katalog.splice(index, 1);
-                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
-                alert("Produk berhasil dihapus!");
-                tampilkanKatalog();
+        // =============================================
+        //  HAPUS PRODUK
+        // =============================================
+        async function hapusProduk(productId) {
+            if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/products/${productId}`, { method: 'DELETE' });
+                const result = await res.json();
+
+                if (!res.ok) {
+                    alert(result.error || 'Gagal menghapus produk!');
+                    return;
+                }
+
+                showNotif('Produk berhasil dihapus!');
+                await fetchProducts();
+            } catch (err) {
+                console.error(err);
+                alert('Gagal terhubung ke server!');
             }
         }
 
+        // =============================================
+        //  LOGOUT
+        // =============================================
         function prosesLogout() {
             if (confirm("Apakah Anda yakin ingin keluar?")) {
                 localStorage.removeItem('currentUser');
-                location.reload();
+                updateNavbar();
+                fetchProducts();
             }
         }
 
+        // =============================================
+        //  INIT
+        // =============================================
         window.onload = function () {
             updateNavbar();
-            tampilkanKatalog();
+            fetchProducts();
         };
     </script>
 

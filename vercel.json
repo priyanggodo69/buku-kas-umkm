@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/lk_umkm",
+      "destination": "/lk_umkm.html"
+    }
+  ]
+}

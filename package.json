@@ -1,0 +1,8 @@
+{
+  "name": "buku-kas-umkm",
+  "version": "1.0.0",
+  "description": "Aplikasi BukuKas dan Katalog Produk untuk UMKM Sulawesi Tengah",
+  "dependencies": {
+    "pg": "^8.20.0"
+  }
+}
