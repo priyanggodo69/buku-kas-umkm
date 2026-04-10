@@ -523,7 +523,8 @@
                 const result = await res.json();
 
                 if (!res.ok) {
-                    alert(result.error || 'Pendaftaran gagal!');
+                    const msg = result.details ? `${result.error}\nDetail: ${result.details}` : (result.error || 'Pendaftaran gagal!');
+                    alert(msg);
                     return;
                 }
 
@@ -554,7 +555,8 @@
                 const result = await res.json();
 
                 if (!res.ok) {
-                    alert(result.error || 'Login gagal!');
+                    const msg = result.details ? `${result.error}\nDetail: ${result.details}` : (result.error || 'Login gagal!');
+                    alert(msg);
                     return;
                 }
 
