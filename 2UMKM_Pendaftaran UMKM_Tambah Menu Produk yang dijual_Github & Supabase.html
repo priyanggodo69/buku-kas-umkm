@@ -109,6 +109,7 @@
                     <select id="filterHarga" onchange="tampilkanKatalog()"
                         class="bg-transparent text-sm font-bold outline-none cursor-pointer pr-4">
                         <option value="terbaru">Terbaru</option>
+                        <option value="kategori">Kategori</option>
                         <option value="murah">Harga Terendah</option>
                         <option value="mahal">Harga Tertinggi</option>
                     </select>
@@ -409,6 +410,7 @@
 
             if (filter === 'murah') dataProduk.sort((a, b) => a.harga - b.harga);
             else if (filter === 'mahal') dataProduk.sort((a, b) => b.harga - a.harga);
+            else if (filter === 'kategori') dataProduk.sort((a, b) => (a.kategori || '').localeCompare(b.kategori || ''));
             // 'terbaru' sudah diurutkan dari server (ORDER BY id DESC)
 
             if (dataProduk.length === 0) {
