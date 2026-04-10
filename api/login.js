@@ -15,6 +15,10 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    if (!process.env.DATABASE_URL) {
+      return res.status(500).json({ error: "Variabel DATABASE_URL tidak ditemukan di Vercel. Pastikan sudah diset di Settings." });
+    }
+
     const result = await pool.query(
       'SELECT * FROM umkm_users WHERE username = $1 AND password = $2',
       [username, password]
@@ -25,7 +29,10 @@ module.exports = async function handler(req, res) {
       return res.status(401).json({ error: "Username atau Password salah!" });
     }
   } catch (err) {
-    console.error('[login]', err);
-    return res.status(500).json({ error: "Terjadi kesalahan pada server saat login." });
+    console.error('[login Error]', err);
+    return res.status(500).json({ 
+        error: "Terjadi kesalahan pada server saat login.",
+        details: err.message
+    });
   }
 };

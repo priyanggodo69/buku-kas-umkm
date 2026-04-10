@@ -10,6 +10,9 @@ module.exports = async function handler(req, res) {
   // GET /api/products — Ambil semua produk
   if (req.method === 'GET') {
     try {
+      if (!process.env.DATABASE_URL) {
+        return res.status(500).json({ error: "DATABASE_URL tidak ditemukan." });
+      }
       const query = `
         SELECT p.*, u.whatsapp
         FROM katalog_produk p
@@ -19,8 +22,8 @@ module.exports = async function handler(req, res) {
       const result = await pool.query(query);
       return res.status(200).json(result.rows);
     } catch (err) {
-      console.error('[products GET]', err);
-      return res.status(500).json({ error: "Gagal mengambil data produk." });
+      console.error('[products GET Error]', err);
+      return res.status(500).json({ error: "Gagal mengambil data produk.", details: err.message });
     }
   }
 
