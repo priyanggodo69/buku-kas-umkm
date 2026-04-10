@@ -15,8 +15,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    if (!process.env.DATABASE_URL) {
-      return res.status(500).json({ error: "Variabel DATABASE_URL tidak ditemukan di Vercel. Pastikan sudah diset di Settings." });
+    if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL && !process.env.SUPABASE_DATABASE_URL) {
+      return res.status(500).json({ error: "Variabel DATABASE_URL tidak ditemukan di Vercel. Pastikan sudah diset di Settings lalu lakukan Redeploy." });
     }
 
     const result = await pool.query(
