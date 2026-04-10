@@ -47,6 +47,22 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        /* CSS Overlay for DJPb Logo */
+        .logo-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .djpb-overlay {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25%;
+            height: auto;
+            pointer-events: none;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
     </style>
 </head>
 
@@ -57,7 +73,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center gap-3">
-                    <img src="logo-umkm.png" alt="Logo UMKM Binaan" class="h-10 w-10 object-cover rounded-full">
+                    <div class="logo-wrapper">
+                        <img src="logo-umkm.png" alt="Logo UMKM Binaan" class="h-10 w-10 object-cover rounded-full">
+                        <img src="logo-djpb.svg" class="djpb-overlay" alt="Overlay DJPb">
+                    </div>
                     <div class="h-8 w-[1px] bg-gray-200 mx-1"></div>
                     <div class="flex items-center gap-2">
                         <div class="bg-blue-600 text-white p-1.5 rounded-lg">
