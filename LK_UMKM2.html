@@ -100,6 +100,10 @@
                         class="hidden text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors border border-blue-200 shadow-sm">
                         <i class="fas fa-store mr-2"></i>Data UMKM
                     </button>
+                    <button id="navLogout" onclick="prosesLogout()"
+                        class="hidden md:block text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors border border-red-200 shadow-sm">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Keluar
+                    </button>
                     <div id="profilUmkmBadge" onclick="bukaModalProfil()"
                         class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold cursor-pointer hover:ring-2 ring-indigo-300 transition-all shadow-sm">
                         UM
@@ -529,7 +533,8 @@
             const loggedInUser = localStorage.getItem('logged_in_user');
             const isLoggedIn = !!loggedInUser;
 
-            const navKeluar = document.getElementById('navKembali'); // Alias for easier refactor
+            const navKeluar = document.getElementById('navKembali');
+            const navLogout = document.getElementById('navLogout');
             const navData = document.getElementById('navData');
             const welcomeScreen = document.getElementById('welcomeScreen');
             const mainDashboard = document.getElementById('mainDashboard');
@@ -538,13 +543,14 @@
                 if (navLogin) navLogin.classList.add('hidden');
                 if (navDaftar) navDaftar.classList.add('hidden');
                 if (navKeluar) navKeluar.classList.remove('hidden');
+                if (navLogout) navLogout.classList.remove('hidden');
                 if (navData) navData.classList.remove('hidden');
                 if (welcomeScreen) welcomeScreen.classList.add('hidden');
                 if (mainDashboard) mainDashboard.classList.remove('hidden');
 
                 // Update badge & title dari data yang tersimpan
                 const userData = JSON.parse(localStorage.getItem('logged_in_user_data')) || {};
-                const namaUmkm = userData.nama_umkm || userData.nama_toko || loggedInUser;
+                const namaUmkm = userData.nama_umkm || userData.nama_toko || loggedInUser || "UMKM";
                 document.getElementById('profilUmkmBadge').innerText = namaUmkm.substring(0, 2).toUpperCase();
 
                 const titleEl = document.getElementById('dashboardTitle');
@@ -556,6 +562,7 @@
                 if (navLogin) navLogin.classList.remove('hidden');
                 if (navDaftar) navDaftar.classList.remove('hidden');
                 if (navKeluar) navKeluar.classList.add('hidden');
+                if (navLogout) navLogout.classList.add('hidden');
                 if (navData) navData.classList.add('hidden');
                 if (welcomeScreen) welcomeScreen.classList.remove('hidden');
                 if (mainDashboard) mainDashboard.classList.add('hidden');
@@ -570,7 +577,16 @@
         //  LOGOUT
         // =============================================
         const kembaliKeBeranda = () => {
-            window.location.href = 'index.html';
+            window.location.href = '2UMKM_Pendaftaran UMKM_Tambah Menu Produk yang dijual_Github & Supabase.html';
+        };
+
+        const prosesLogout = () => {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('logged_in_user');
+                localStorage.removeItem('logged_in_user_data');
+                window.location.href = '2UMKM_Pendaftaran UMKM_Tambah Menu Produk yang dijual_Github & Supabase.html';
+            }
         };
 
         // =============================================

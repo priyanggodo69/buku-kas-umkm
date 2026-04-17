@@ -10,8 +10,8 @@ module.exports = async function handler(req, res) {
   // GET /api/products — Ambil semua produk
   if (req.method === 'GET') {
     try {
-      if (!process.env.DATABASE_URL) {
-        return res.status(500).json({ error: "DATABASE_URL tidak ditemukan." });
+      if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL && !process.env.SUPABASE_DATABASE_URL) {
+        return res.status(500).json({ error: "DATABASE_URL tidak ditemukan. Pastikan sudah diset di Vercel Settings." });
       }
       const query = `
         SELECT p.*, u.whatsapp

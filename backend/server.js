@@ -11,9 +11,13 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Database connection
+// Database connection — gunakan environment variable, jangan hardcode!
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DATABASE_URL;
+if (!connectionString) {
+  console.error("DATABASE_URL tidak ditemukan! Pastikan file .env sudah ada.");
+}
 const pool = new Pool({
-  connectionString: 'postgresql://postgres.epkwydayacikwvksakfh:Mikaelpraditya1@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres',
+  connectionString: connectionString,
   ssl: {
     rejectUnauthorized: false
   }

@@ -434,7 +434,9 @@
                     `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-lg font-bold uppercase tracking-tight">${kat}</span>`
                 ).join(' ');
 
-                const waOwner = item.whatsapp || '628123456789';
+                // Normalisasi nomor WhatsApp (ganti 0 di depan dengan 62)
+                let cleanedWA = (item.whatsapp || '628123456789').replace(/^0/, '62');
+                const waOwner = cleanedWA;
 
                 let actionButtons = `
                         <a href="https://wa.me/${waOwner}" target="_blank" class="bg-orange-600 text-white p-4 rounded-2xl hover:bg-gray-900 transition shadow-lg shadow-orange-200">
@@ -726,6 +728,8 @@
         function prosesLogout() {
             if (confirm("Apakah Anda yakin ingin keluar?")) {
                 localStorage.removeItem('currentUser');
+                localStorage.removeItem('logged_in_user');
+                localStorage.removeItem('logged_in_user_data');
                 updateNavbar();
                 fetchProducts();
             }
