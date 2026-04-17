@@ -14,39 +14,13 @@
             scroll-behavior: smooth;
         }
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('bg-sulteng.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            filter: blur(5px) brightness(0.95);
-            transform: scale(1.1);
-            /* Prevent white edges from blur */
-            z-index: -1;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0;
             background-color: #f9fafb;
         }
 
         .hero-gradient {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-        }
-
-        .glass-section {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 100%);
         }
 
         /* Memberikan jarak agar judul tidak tertutup navbar yang melayang saat scroll */
@@ -62,7 +36,7 @@
 
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center">
                 <span class="text-2xl font-bold text-orange-600">Rumah<span class="text-gray-900">UMKM</span><span
                         class="text-blue-600">CenterCelebes</span></span>
             </div>
@@ -72,7 +46,7 @@
                     class="text-gray-600 font-medium hover:text-orange-600 transition">Beranda</a>
                 <a href="#katalog" id="navKatalog"
                     class="text-gray-600 font-medium hover:text-orange-600 transition">Katalog</a>
-                <a href="javascript:void(0)" onclick="bukaTentang()" class="text-gray-600 font-medium hover:text-orange-600 transition">Tentang Kami</a>
+                <a href="#tentang" class="text-gray-600 font-medium hover:text-orange-600 transition">Tentang Kami</a>
             </div>
 
             <div id="authStatus" class="flex items-center gap-4"></div>
@@ -93,11 +67,13 @@
                     Produk</a>
             </div>
             <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600"
+                    class="rounded-2xl shadow-2xl rotate-3 border-8 border-white w-80 h-80 object-cover">
             </div>
         </div>
     </section>
 
-    <section id="katalog" class="py-24 glass-section">
+    <section id="katalog" class="py-24 bg-white border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
                 <div>
@@ -110,7 +86,6 @@
                     <select id="filterHarga" onchange="tampilkanKatalog()"
                         class="bg-transparent text-sm font-bold outline-none cursor-pointer pr-4">
                         <option value="terbaru">Terbaru</option>
-                        <option value="kategori">Kategori</option>
                         <option value="murah">Harga Terendah</option>
                         <option value="mahal">Harga Tertinggi</option>
                     </select>
@@ -263,7 +238,7 @@
             <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Edit Produk</h3>
 
             <form id="formEditProduk" class="space-y-4">
-                <input type="hidden" id="editProductId">
+                <input type="hidden" id="editIndex">
                 <input type="text" id="editNamaProduk" placeholder="Nama Produk/Jasa" required
                     class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
 
@@ -308,32 +283,7 @@
     </div>
 
     <script>
-        // =============================================
-        //  KONFIGURASI
-        // =============================================
-        const PROD_URL = 'https://buku-kas-umkm-8nb1.vercel.app';
-        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'http://localhost:3000/api'
-            : (window.location.protocol === 'file:')
-                ? `${PROD_URL}/api`
-                : '/api';
-
-        // =============================================
-        //  STATE
-        // =============================================
-        let allProducts = []; // data dari server
-
-        function bukaTentang() {
-            bukaModal('modalTentang');
-        }
-
-        function tutupTentang() {
-            tutupModal('modalTentang');
-        }
-
-        // =============================================
-        //  FUNGSI DASAR MODAL
-        // =============================================
+        // FUNGSI DASAR MODAL
         function bukaModal(id) {
             document.getElementById(id).classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -344,32 +294,7 @@
             document.body.style.overflow = 'auto';
         }
 
-        // =============================================
-        //  NOTIFIKASI
-        // =============================================
-        function showNotif(message, type = 'success') {
-            const colors = {
-                success: 'bg-gray-900 text-white',
-                error: 'bg-red-600 text-white'
-            };
-            const icons = {
-                success: 'fa-check-circle text-emerald-400',
-                error: 'fa-times-circle text-red-200'
-            };
-            const notif = document.createElement('div');
-            notif.className = `fixed bottom-4 right-4 ${colors[type]} px-6 py-3 rounded-xl shadow-2xl z-50 transform transition-all translate-y-0 opacity-100 flex items-center gap-3`;
-            notif.innerHTML = `<i class="fas ${icons[type]}"></i> ${message}`;
-            document.body.appendChild(notif);
-            setTimeout(() => {
-                notif.style.opacity = '0';
-                notif.style.transform = 'translateY(1rem)';
-                setTimeout(() => notif.remove(), 300);
-            }, 3000);
-        }
-
-        // =============================================
-        //  UPDATE UI NAVBAR
-        // =============================================
+        // UPDATE UI NAVBAR
         function updateNavbar() {
             const status = document.getElementById('authStatus');
             const navBeranda = document.getElementById('navBeranda');
@@ -387,7 +312,7 @@
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Pemilik: ${user.nama_pemilik}</p>
                             <p class="text-sm font-bold text-orange-600">${user.nama_toko}</p>
                         </div>
-                        <a href="lk_umkm.html" class="bg-teal-600 text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-teal-700 transition">
+                        <a href="LK_UMKM2.html" class="bg-teal-600 text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-teal-700 transition">
                             <i class="fas fa-book mr-1"></i> Catat Transaksi
                         </a>
                         <button onclick="bukaModal('modalTambahProduk')" class="bg-orange-600 text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md hover:bg-orange-700 transition">
@@ -405,27 +330,21 @@
             }
         }
 
-        // =============================================
-        //  TAMPILKAN KATALOG (dari data server)
-        // =============================================
         function tampilkanKatalog() {
             const container = document.getElementById('containerKatalog');
             const emptyState = document.getElementById('katalogKosong');
             const filter = document.getElementById('filterHarga').value;
+            let dataProduk = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+
+            // Filter produk berdasarkan user yang sedang login
             const user = JSON.parse(localStorage.getItem('currentUser'));
-
-            // Clone array supaya tidak mengubah data asli
-            let dataProduk = [...allProducts];
-
-            // Jika login, tampilkan hanya produk milik sendiri
             if (user) {
                 dataProduk = dataProduk.filter(item => item.pemilik === user.nama_toko);
             }
 
             if (filter === 'murah') dataProduk.sort((a, b) => a.harga - b.harga);
             else if (filter === 'mahal') dataProduk.sort((a, b) => b.harga - a.harga);
-            else if (filter === 'kategori') dataProduk.sort((a, b) => (a.kategori || '').localeCompare(b.kategori || ''));
-            // 'terbaru' sudah diurutkan dari server (ORDER BY id DESC)
+            else if (filter === 'terbaru') dataProduk.reverse();
 
             if (dataProduk.length === 0) {
                 container.innerHTML = '';
@@ -435,11 +354,15 @@
 
             emptyState.classList.add('hidden');
             container.innerHTML = dataProduk.map((item) => {
-                const tags = (item.kategori || '').split(', ').map(kat =>
+                const tags = item.kategori.split(', ').map(kat =>
                     `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-lg font-bold uppercase tracking-tight">${kat}</span>`
                 ).join(' ');
 
-                const waOwner = item.whatsapp || '628123456789';
+                const dbUMKM = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
+                const waOwner = dbUMKM.find(u => u.nama_toko === item.pemilik)?.whatsapp || '628123456789';
+
+                let originalKatalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+                let realIndex = originalKatalog.findIndex(p => p.nama === item.nama && p.pemilik === item.pemilik);
 
                 let actionButtons = `
                         <a href="https://wa.me/${waOwner}" target="_blank" class="bg-orange-600 text-white p-4 rounded-2xl hover:bg-gray-900 transition shadow-lg shadow-orange-200">
@@ -449,15 +372,13 @@
                 if (user && item.pemilik === user.nama_toko) {
                     actionButtons = `
                     <div class="flex gap-2">
-                        <button onclick="bukaModalEdit(${item.id})" class="bg-blue-600 text-white p-4 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                        <button onclick="bukaModalEdit(${realIndex})" class="bg-blue-600 text-white p-4 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">
                             <i class="fas fa-edit text-xl"></i>
                         </button>
-                        <button onclick="hapusProduk(${item.id})" class="bg-red-600 text-white p-4 rounded-2xl hover:bg-red-700 transition shadow-lg shadow-red-200">
+                        <button onclick="hapusProduk(${realIndex})" class="bg-red-600 text-white p-4 rounded-2xl hover:bg-red-700 transition shadow-lg shadow-red-200">
                             <i class="fas fa-trash text-xl"></i>
                         </button>
-                        <a href="https://wa.me/${waOwner}" target="_blank" class="bg-orange-600 text-white p-4 rounded-2xl hover:bg-gray-900 transition shadow-lg shadow-orange-200">
-                            <i class="fab fa-whatsapp text-xl"></i>
-                        </a>
+                        ${actionButtons}
                     </div>`;
                 }
 
@@ -483,25 +404,8 @@
             }).join('');
         }
 
-        // =============================================
-        //  FETCH PRODUK DARI SERVER
-        // =============================================
-        async function fetchProducts() {
-            try {
-                const res = await fetch(`${API_BASE}/products`);
-                if (!res.ok) throw new Error('Gagal mengambil produk');
-                allProducts = await res.json();
-                tampilkanKatalog();
-            } catch (err) {
-                console.error(err);
-                showNotif('Gagal terhubung ke server. Pastikan server berjalan!', 'error');
-            }
-        }
-
-        // =============================================
-        //  LOGIKA PENDAFTARAN
-        // =============================================
-        document.getElementById('formPendaftaran').addEventListener('submit', async function (e) {
+        // LOGIKA PENDAFTARAN
+        document.getElementById('formPendaftaran').addEventListener('submit', function (e) {
             e.preventDefault();
             const checkboxes = document.querySelectorAll('input[name="kategori_mitra"]:checked');
             const kategoriTerpilih = Array.from(checkboxes).map(cb => cb.value);
@@ -519,127 +423,78 @@
                 alamat: this.alamat.value
             };
 
-            try {
-                const res = await fetch(`${API_BASE}/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await res.json();
+            let db = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
+            db.push(data);
+            localStorage.setItem('databaseUMKM', JSON.stringify(db));
 
-                if (!res.ok) {
-                    alert(result.error || 'Pendaftaran gagal!');
-                    return;
-                }
-
-                showNotif(`Selamat bergabung, ${data.nama_pemilik}!`);
-                this.reset();
-                tutupModal('modalDaftar');
-                bukaModal('modalLogin');
-            } catch (err) {
-                console.error(err);
-                alert('Gagal terhubung ke server!');
-            }
+            alert(`Selamat bergabung, ${data.nama_pemilik}!`);
+            tutupModal('modalDaftar');
+            bukaModal('modalLogin');
         });
 
-        // =============================================
-        //  LOGIKA LOGIN
-        // =============================================
-        document.getElementById('formLogin').addEventListener('submit', async function (e) {
+        // LOGIKA LOGIN
+        document.getElementById('formLogin').addEventListener('submit', function (e) {
             e.preventDefault();
-            const username = document.getElementById('loginUser').value;
-            const password = document.getElementById('loginPass').value;
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            const db = JSON.parse(localStorage.getItem('databaseUMKM')) || [];
+            const akun = db.find(a => a.username === u && a.password === p);
 
-            try {
-                const res = await fetch(`${API_BASE}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const result = await res.json();
-
-                if (!res.ok) {
-                    alert(result.error || 'Login gagal!');
-                    return;
-                }
-
-                localStorage.setItem('currentUser', JSON.stringify(result.user));
-                tutupModal('modalLogin');
-                updateNavbar();
-                tampilkanKatalog();
-                showNotif('Login berhasil!');
-            } catch (err) {
-                console.error(err);
-                alert('Gagal terhubung ke server!');
-            }
+            if (akun) {
+                localStorage.setItem('currentUser', JSON.stringify(akun));
+                location.reload();
+            } else alert("Username atau Password salah!");
         });
 
-        // =============================================
-        //  LOGIKA TAMBAH PRODUK
-        // =============================================
-        document.getElementById('formProduk').addEventListener('submit', async function (e) {
+        // LOGIKA TAMBAH PRODUK (DENGAN BASE64)
+        document.getElementById('formProduk').addEventListener('submit', function (e) {
             e.preventDefault();
             const fileInput = document.getElementById('gambarProduk');
             const file = fileInput.files[0];
+            const reader = new FileReader();
 
             const checkboxKategori = document.querySelectorAll('input[name="kategori"]:checked');
             let kategoriTerpilih = Array.from(checkboxKategori).map(item => item.value);
 
             if (kategoriTerpilih.length === 0) return alert("Pilih minimal satu kategori!");
-            if (!file) return alert("Pilih foto produk!");
 
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const user = JSON.parse(localStorage.getItem('currentUser'));
+            reader.onloadend = () => {
                 const produk = {
                     nama: document.getElementById('namaProduk').value,
                     kategori: kategoriTerpilih.join(", "),
                     harga: document.getElementById('hargaProduk').value,
                     detail: document.getElementById('detailProduk').value,
                     gambar: reader.result,
-                    pemilik: user.nama_toko
+                    pemilik: JSON.parse(localStorage.getItem('currentUser')).nama_toko
                 };
 
-                try {
-                    const res = await fetch(`${API_BASE}/products`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(produk)
-                    });
-                    const result = await res.json();
+                let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+                katalog.push(produk);
+                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
 
-                    if (!res.ok) {
-                        alert(result.error || 'Gagal menyimpan produk!');
-                        return;
-                    }
-
-                    showNotif('Produk berhasil disimpan!');
-                    tutupModal('modalTambahProduk');
-                    this.reset();
-                    await fetchProducts();
-                } catch (err) {
-                    console.error(err);
-                    alert('Gagal terhubung ke server!');
-                }
+                alert("Produk berhasil disimpan!");
+                tutupModal('modalTambahProduk');
+                this.reset();
+                tampilkanKatalog();
             };
-            reader.readAsDataURL(file);
+
+            if (file) reader.readAsDataURL(file);
+            else alert("Pilih foto produk!");
         });
 
-        // =============================================
-        //  LOGIKA EDIT PRODUK
-        // =============================================
-        function bukaModalEdit(productId) {
-            const produk = allProducts.find(p => p.id === productId);
+        function bukaModalEdit(index) {
+            let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+            let produk = katalog[index];
             if (!produk) return;
 
-            document.getElementById('editProductId').value = productId;
+            document.getElementById('editIndex').value = index;
             document.getElementById('editNamaProduk').value = produk.nama;
             document.getElementById('editHargaProduk').value = produk.harga;
             document.getElementById('editDetailProduk').value = produk.detail;
             document.getElementById('editGambarExisting').value = produk.gambar;
 
             const checkboxKategori = document.querySelectorAll('input[name="editKategori"]');
-            const kategoriProduk = (produk.kategori || '').split(', ');
+            const kategoriProduk = produk.kategori.split(', ');
             checkboxKategori.forEach(cb => {
                 cb.checked = kategoriProduk.includes(cb.value);
             });
@@ -647,9 +502,9 @@
             bukaModal('modalEditProduk');
         }
 
-        document.getElementById('formEditProduk').addEventListener('submit', async function (e) {
+        document.getElementById('formEditProduk').addEventListener('submit', function (e) {
             e.preventDefault();
-            const productId = document.getElementById('editProductId').value;
+            const index = document.getElementById('editIndex').value;
             const fileInput = document.getElementById('editGambarProduk');
             const file = fileInput.files[0];
             const existingImage = document.getElementById('editGambarExisting').value;
@@ -659,159 +514,55 @@
 
             if (kategoriTerpilih.length === 0) return alert("Pilih minimal satu kategori!");
 
-            const doEdit = async (gambarBase64) => {
-                const payload = {
+            let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+
+            const saveEditedProduct = (gambarBase64) => {
+                katalog[index] = {
+                    ...katalog[index],
                     nama: document.getElementById('editNamaProduk').value,
                     kategori: kategoriTerpilih.join(", "),
                     harga: document.getElementById('editHargaProduk').value,
                     detail: document.getElementById('editDetailProduk').value,
-                    gambar: gambarBase64 || null
+                    gambar: gambarBase64
                 };
-
-                try {
-                    const res = await fetch(`${API_BASE}/products/${productId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await res.json();
-
-                    if (!res.ok) {
-                        alert(result.error || 'Gagal mengubah produk!');
-                        return;
-                    }
-
-                    showNotif('Perubahan produk berhasil disimpan!');
-                    tutupModal('modalEditProduk');
-                    this.reset();
-                    await fetchProducts();
-                } catch (err) {
-                    console.error(err);
-                    alert('Gagal terhubung ke server!');
-                }
+                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
+                alert("Perubahan produk berhasil disimpan!");
+                tutupModal('modalEditProduk');
+                this.reset();
+                tampilkanKatalog();
             };
 
             if (file) {
                 const reader = new FileReader();
-                reader.onloadend = () => doEdit(reader.result);
+                reader.onloadend = () => saveEditedProduct(reader.result);
                 reader.readAsDataURL(file);
             } else {
-                doEdit(existingImage);
+                saveEditedProduct(existingImage);
             }
         });
 
-        // =============================================
-        //  HAPUS PRODUK
-        // =============================================
-        async function hapusProduk(productId) {
-            if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
-
-            try {
-                const res = await fetch(`${API_BASE}/products/${productId}`, { method: 'DELETE' });
-                const result = await res.json();
-
-                if (!res.ok) {
-                    alert(result.error || 'Gagal menghapus produk!');
-                    return;
-                }
-
-                showNotif('Produk berhasil dihapus!');
-                await fetchProducts();
-            } catch (err) {
-                console.error(err);
-                alert('Gagal terhubung ke server!');
+        function hapusProduk(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+                let katalog = JSON.parse(localStorage.getItem('katalogUMKM')) || [];
+                katalog.splice(index, 1);
+                localStorage.setItem('katalogUMKM', JSON.stringify(katalog));
+                alert("Produk berhasil dihapus!");
+                tampilkanKatalog();
             }
         }
 
-        // =============================================
-        //  LOGOUT
-        // =============================================
         function prosesLogout() {
             if (confirm("Apakah Anda yakin ingin keluar?")) {
                 localStorage.removeItem('currentUser');
-                updateNavbar();
-                fetchProducts();
+                location.reload();
             }
         }
 
-        // =============================================
-        //  INIT
-        // =============================================
         window.onload = function () {
             updateNavbar();
-            fetchProducts();
+            tampilkanKatalog();
         };
     </script>
-
-    <!-- Modal Tentang Kami -->
-    <div id="modalTentang" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto">
-        <div class="relative bg-white/90 backdrop-blur-md rounded-[3rem] max-w-6xl w-full p-8 md:p-12 shadow-2xl my-auto animate-in fade-in zoom-in duration-300">
-            <button onclick="tutupTentang()" class="absolute top-6 right-6 w-12 h-12 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition-all shadow-md z-120">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div class="relative">
-                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-orange-100 rounded-full blur-3xl opacity-50"></div>
-                    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
-                    <div class="relative bg-white/60 p-10 rounded-[2.5rem] border border-white/50 shadow-xl backdrop-blur-sm">
-                        <div class="flex items-center gap-4 mb-8">
-                            <div class="p-4 bg-orange-600 rounded-2xl shadow-lg">
-                                <i class="fas fa-university text-2xl text-white"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-2xl font-black text-gray-900 leading-tight">Kanwil DJPb</h3>
-                                <p class="text-sm font-bold text-gray-500 uppercase tracking-widest">Provinsi Sulawesi Tengah</p>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-6">
-                            <div class="flex gap-5">
-                                <div class="w-12 h-12 flex-shrink-0 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-                                    <i class="fas fa-chart-line text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-gray-900 mb-1">Misi Pemberdayaan</h4>
-                                    <p class="text-sm text-gray-600 leading-relaxed">Berkomitmen menjaga keberlanjutan ekonomi daerah melalui digitalisasi UMKM dan penguatan tata kelola keuangan.</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-5">
-                                <div class="w-12 h-12 flex-shrink-0 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                                    <i class="fas fa-hand-holding-heart text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-gray-900 mb-1">Dukungan Strategis</h4>
-                                    <p class="text-sm text-gray-600 leading-relaxed">Menyediakan pendampingan intensif bagi pelaku usaha lokal untuk naik kelas ke pasar profesional.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-left">
-                    <span class="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 text-xs font-black uppercase tracking-[0.2em] rounded-full mb-6">Tentang Kami</span>
-                    <h2 class="text-4xl font-black text-gray-900 mb-8 leading-[1.1]">Mendorong UMKM <span class="text-orange-600 italic underline decoration-blue-600 decoration-8 underline-offset-8">Berjaya</span> di Bumi Tadulako</h2>
-                    
-                    <p class="text-lg text-gray-600 mb-10 leading-relaxed">
-                        Rumah UMKM Center Celebes merupakan inisiatif kolaboratif di bawah naungan <strong>Kantor Wilayah Direktorat Jenderal Perbendaharaan Provinsi Sulawesi Tengah</strong>. Kami hadir sebagai jembatan bagi para pengusaha kreatif di Sulawesi Tengah untuk memasuki ekosistem digital secara profesional dan berkelanjutan.
-                    </p>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div class="p-6 bg-white/50 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
-                            <i class="fas fa-map-marked-alt text-2xl text-blue-600 mb-4"></i>
-                            <h5 class="font-bold text-gray-900 mb-1">Lokasi Kami</h5>
-                            <p class="text-xs text-gray-500 leading-relaxed">Jl. Tanjung Dako No. 15, Palu Selatan, Kota Palu, Sulawesi Tengah</p>
-                        </div>
-                        <div class="p-6 bg-white/50 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
-                            <i class="fas fa-headset text-2xl text-orange-600 mb-4"></i>
-                            <h5 class="font-bold text-gray-900 mb-1">Hubungi Kami</h5>
-                            <p class="text-xs text-gray-500 leading-relaxed">Senin - Jumat | 08:00 - 16:30 WITA<br>Email: kanwil.sulteng@kemenkeu.go.id</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <footer class="bg-gray-900 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
