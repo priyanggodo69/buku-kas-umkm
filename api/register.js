@@ -16,6 +16,10 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL && !process.env.SUPABASE_DATABASE_URL) {
+      return res.status(500).json({ error: "Variabel DATABASE_URL tidak ditemukan di Vercel. Pastikan sudah diset di Settings lalu lakukan Redeploy." });
+    }
+
     const query = `
       INSERT INTO umkm_users (username, password, nama_pemilik, nama_toko, kategori, kota, whatsapp, alamat, bidang, tanggal_berdiri, izin)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -36,6 +40,9 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Username sudah digunakan!" });
     }
     console.error('[register]', err);
-    return res.status(500).json({ error: "Terjadi kesalahan pada server saat registrasi." });
+    return res.status(500).json({ 
+        error: "Terjadi kesalahan pada server saat registrasi.",
+        details: err.message
+    });
   }
 };
